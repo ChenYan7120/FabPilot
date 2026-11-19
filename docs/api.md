@@ -8,14 +8,14 @@
 ## 运行
 
 ```bash
-# start Postgres (optional; SQLite also works)
+# 启动 Postgres（可选；SQLite 也可用）
 docker compose up -d postgres
 
-# create tables + seed synthetic data
+# 建表 + 填充合成数据
 fabpilot init-db
 fabpilot seed
 
-# start the server
+# 启动服务
 fabpilot api --host 0.0.0.0 --port 8000
 ```
 

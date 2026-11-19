@@ -22,27 +22,27 @@ FabPilot 是一个面向工业时序 forecasting 和故障诊断的 **hypothesis
 
 ```mermaid
 flowchart TB
-    subgraph Supervisor["Supervisor (hierarchical ReAct)"]
-        SLP["ReAct loop（遍历 delegation tools）"]
+    subgraph Supervisor["Supervisor（层级 ReAct）"]
+        SLP["ReAct 循环（遍历 delegation tools）"]
         DTS["delegate_to_timeseries"]
         DDX["delegate_to_diagnosis"]
         DKN["delegate_to_knowledge"]
         FIN["finish(report)"]
     end
 
-    subgraph TS["Time-Series Agent"]
-        TS_LOOP["ReAct loop"]
+    subgraph TS["时序 Agent"]
+        TS_LOOP["ReAct 循环"]
         TS_TOOLS["sensor_data · forecast · anomaly_detection · correlation · lag_analysis · statistical_analysis · chart"]
     end
 
-    subgraph DX["Diagnosis Agent"]
-        DX_LOOP["ReAct loop"]
+    subgraph DX["诊断 Agent"]
+        DX_LOOP["ReAct 循环"]
         MEM["Hypothesis-Evidence Memory"]
         DX_TOOLS["sensor_data · alarm_log · maintenance_record · fault_case · correlation · lag_analysis · memory ops"]
     end
 
-    subgraph KN["Knowledge Agent"]
-        KN_LOOP["ReAct loop"]
+    subgraph KN["知识 Agent"]
+        KN_LOOP["ReAct 循环"]
         KN_TOOLS["document_retrieval · similar_case_retrieval"]
     end
 
@@ -54,9 +54,9 @@ flowchart TB
 
     subgraph Infra["共享基础设施"]
         STATE["共享 LangGraph state（append-only logs）"]
-        REG["Forecast Model Registry"]
-        KB["Knowledge Base (hybrid RAG)"]
-        DB["MES/FDC database (Postgres/SQLite)"]
+        REG["Forecast 模型注册表"]
+        KB["知识库（混合 RAG）"]
+        DB["MES/FDC 数据库（Postgres/SQLite）"]
     end
 
     TS_TOOLS --> REG

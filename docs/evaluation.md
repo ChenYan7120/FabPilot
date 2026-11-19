@@ -7,7 +7,7 @@ evaluation 框架在 *真实* tools 之上衡量 *agent 系统* —— 包括路
 ## 工作原理
 
 ```bash
-fabpilot eval          # runs all configs × scenarios, writes data/reports/evaluation.md + .json
+fabpilot eval          # 运行所有配置 × 场景，写出 data/reports/evaluation.md + .json
 ```
 
 该框架（`fabpilot.eval.runner`）：

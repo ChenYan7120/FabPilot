@@ -34,11 +34,11 @@ retrieval-augmented reasoning 统一整合在一个 Supervisor 之后。其灵�
 
 ```mermaid
 flowchart TB
-    USER["用户任务"] --> SUP["Supervisor (hierarchical ReAct)"]
+    USER["用户任务"] --> SUP["Supervisor（层级 ReAct）"]
 
-    SUP -->|delegate_to_timeseries| TS["Time-Series Agent"]
-    SUP -->|delegate_to_diagnosis| DX["Diagnosis Agent"]
-    SUP -->|delegate_to_knowledge| KN["Knowledge Agent"]
+    SUP -->|delegate_to_timeseries| TS["时序 Agent"]
+    SUP -->|delegate_to_diagnosis| DX["诊断 Agent"]
+    SUP -->|delegate_to_knowledge| KN["知识 Agent"]
     SUP -->|finish| OUT["最终报告"]
 
     TS --> TST["sensor_data · forecast · anomaly_detection · correlation · lag · stats"]
@@ -46,10 +46,10 @@ flowchart TB
     DX <--> MEM["Hypothesis-Evidence Memory"]
     KN --> KNT["document_retrieval · similar_case_retrieval"]
 
-    TST --> REG["Forecast Model Registry"]
-    TST --> DB[("MES/FDC DB")]
+    TST --> REG["Forecast 模型注册表"]
+    TST --> DB[("MES/FDC 数据库")]
     DXT --> DB
-    KNT --> KB[("Knowledge Base (RAG)")]
+    KNT --> KB[("知识库（RAG）")]
     DXT --> KB
 
     SUP --> STATE["共享 LangGraph state（checkpointed）"]
@@ -61,26 +61,26 @@ flowchart TB
 ## 快速开始
 
 ```bash
-# 1. Install
+# 1. 安装
 pip install -e ".[ui,charts,dev]"
 
-# 2. Configure (copy, then fill in your DeepSeek key — never commit .env)
+# 2. 配置（先复制，再填入你的 DeepSeek key——切勿提交 .env）
 cp .env.example .env
 
-# 3. Start Postgres (or set FABPILOT_DATABASE_URL to a SQLite URL)
+# 3. 启动 Postgres（或将 FABPILOT_DATABASE_URL 设为 SQLite 地址）
 docker compose up -d postgres
 
-# 4. Create tables + seed synthetic data
+# 4. 建表 + 填充合成数据
 fabpilot init-db
 fabpilot seed
 
-# 5. Run a task through the agent system
+# 5. 通过 agent 系统运行一个任务
 fabpilot run "ETCH-01 的 gas_flow 最近出现漂移，请诊断根因并给出处置建议。"
 
-# 6. API / UI / evaluation
+# 6. API / UI / 评估
 fabpilot api          # http://localhost:8000/docs
 fabpilot ui           # http://localhost:8501
-fabpilot eval         # writes data/reports/evaluation.md + .json
+fabpilot eval         # 写出 data/reports/evaluation.md + .json
 ```
 
 还没有 DeepSeek key？data/analytics 端点和 evaluation 框架无需 key 即可运行；
@@ -90,22 +90,22 @@ fabpilot eval         # writes data/reports/evaluation.md + .json
 
 ```
 fabpilot/
-├── agents/          # Supervisor + 3 specialist agents (shared ReAct loop)
-├── api/             # FastAPI app, routes, schemas, service
-├── data/            # SQLAlchemy models, queries, synthetic generator, seed
-├── eval/            # scenarios, ScriptedLLM, metrics, runner, report
-├── forecasting/     # ForecastModel protocol, real baseline, adapter skeletons
-├── llm/             # OpenAI-compatible + deterministic fakes
-├── memory/          # Hypothesis-Evidence Memory, checkpointer, session store
-├── rag/             # hybrid retriever (dense+BM25, RRF), embedder, vector store
-├── state/           # shared AgentState + diff
+├── agents/          # Supervisor + 3 个专业 agent（共用 ReAct 循环）
+├── api/             # FastAPI 应用、路由、schema、服务
+├── data/            # SQLAlchemy 模型、查询、合成数据生成器、seed
+├── eval/            # 场景、ScriptedLLM、指标、runner、报告
+├── forecasting/     # ForecastModel 协议、真实 baseline、adapter 骨架
+├── llm/             # OpenAI 兼容 + 确定性替身
+├── memory/          # Hypothesis-Evidence Memory、checkpointer、会话存储
+├── rag/             # 混合检索器（dense+BM25、RRF）、embedder、向量库
+├── state/           # 共享 AgentState + diff
 ├── tools/           # ToolRegistry + data/timeseries/knowledge/memory/general tools
 ├── ui/              # Streamlit UI
-└── workflows/       # LangGraph assembly
-knowledge_base/      # sample SOP / alarm / fault-case documents
-docs/                # architecture, API, evaluation, research
-tests/               # pytest suite
-scripts/             # thin entry-point wrappers
+└── workflows/       # LangGraph 组装
+knowledge_base/      # 示例 SOP / alarm / fault-case 文档
+docs/                # architecture、API、evaluation、research
+tests/               # pytest 测试套件
+scripts/             # 薄入口封装
 ```
 
 ## Agent 边界
