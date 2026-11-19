@@ -54,8 +54,8 @@ class SimilarCaseInput(BaseModel):
 @tool(
     name="similar_case_retrieval",
     description=(
-        "检索与所描述症状相似的历史故障案例。由 Diagnosis Agent 使用，"
-        "用先例为 hypothesis 提供依据。"
+        "检索与所描述症状相似的历史故障案例。由诊断 Agent 使用，"
+        "用先例为假设提供依据。"
     ),
     input_model=SimilarCaseInput,
     tags=["knowledge"],

@@ -1,4 +1,4 @@
-"""Hypothesis-Evidence Memory 状态机测试。
+"""假设-证据记忆状态机测试。
 
 这些测试验证*真实*的确定性状态转换，而非 prompt 行为。
 """
@@ -83,8 +83,8 @@ def test_snapshot_roundtrip():
 
 
 def test_correlation_alone_does_not_support_causal_claim():
-    """相关性可以作为某个 hypothesis 的*支持证据*，但只要因果性检查仍处于
-    待处理状态，它自身就永远无法终结该 hypothesis。"""
+    """相关性可以作为某个假设的*支持证据*，但只要因果性检查仍处于
+    待处理状态，它自身就永远无法终结该假设。"""
     mem = HypothesisEvidenceMemory()
     h = mem.add_hypothesis("pressure drop causes flow drift")
     mem.add_evidence(h.id, "correlation", {"a": "flow", "b": "pressure"}, "r=0.9", kind=EvidenceKind.SUPPORTING, confidence=0.9)

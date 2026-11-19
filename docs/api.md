@@ -2,8 +2,8 @@
 
 暴露两个界面的 FastAPI REST API：
 
-- **MES/FDC 数据 + analytics** —— 真实 tools，无需 LLM。
-- **Agent tasks** —— 运行完整的分层 agent 系统并获取结果。
+- **MES/FDC 数据 + 分析** —— 真实工具，无需 LLM。
+- **Agent 任务** —— 运行完整的分层 agent 系统并获取结果。
 
 ## 运行
 
@@ -44,8 +44,8 @@ GET /api/v1/health
 
 | Method | Path | 描述 |
 |---|---|---|
-| POST | `/api/v1/forecast` | 对某个 channel 做 forecast（参见 `ForecastRequest`） |
-| POST | `/api/v1/anomaly-detection` | 检测 anomalies（参见 `AnomalyRequest`） |
+| POST | `/api/v1/forecast` | 对某个通道做预测（参见 `ForecastRequest`） |
+| POST | `/api/v1/anomaly-detection` | 检测异常（参见 `AnomalyRequest`） |
 | POST | `/api/v1/search` | 混合知识检索（参见 `SearchRequest`） |
 
 ### Agent 任务
@@ -58,7 +58,7 @@ GET /api/v1/health
 
 ## 请求 / 响应示例
 
-### Forecast
+### 预测
 
 ```bash
 curl -X POST http://localhost:8000/api/v1/forecast \
@@ -79,7 +79,7 @@ curl -X POST http://localhost:8000/api/v1/forecast \
 }
 ```
 
-### Anomaly detection
+### 异常检测
 
 ```bash
 curl -X POST http://localhost:8000/api/v1/anomaly-detection \
@@ -110,8 +110,8 @@ curl -X POST http://localhost:8000/api/v1/tasks \
 
 ## 架构说明
 
-- `FabPilotService` 会预先构建非 LLM 依赖（database session scope、
-  forecast registry、knowledge base、tool registry），因此 data/analytics
+- `FabPilotService` 会预先构建非 LLM 依赖（数据库会话作用域、
+  预测模型注册表、知识库、工具注册表），因此数据/分析
   端点无需 API key 即可工作。
 - 完整的 `Runtime`（LLM + LangGraph）在首次任务调用时才被**懒加载**构建，
   因此启动 API 从不需要 LLM API key。

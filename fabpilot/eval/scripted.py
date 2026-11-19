@@ -1,7 +1,7 @@
 """用于评测的确定性脚本化 LLM。
 
 ``FakeLLM`` 只是重放一个扁平的响应列表，对路由而言已足够，但
-Diagnosis Agent 的 memory tool 是*链式*的：``add_evidence`` 需要上一轮
+诊断 Agent 的记忆工具是*链式*的：``add_evidence`` 需要上一轮
 ``add_hypothesis`` 返回的 id。``ScriptedLLM`` 弥补了这一缺口——
 它允许脚本步骤既可以是静态的 ``AssistantResponse``，也可以是接收
 ``ScriptContext``（含迄今观测到的*真实* tool 结果）的可调用对象。

@@ -1,6 +1,6 @@
 """预测模型契约。
 
-预测模型是一个 *纯回归器*：给定一个或多个 channel 的 lookback 窗口，返回单个目标 channel 的未来值。它不做任何异常检测，也不做诊断——这些功能位于 Time-Series Agent 中。
+预测模型是一个 *纯回归器*：给定一个或多个通道的 lookback 窗口，返回单个目标通道的未来值。它不做任何异常检测，也不做诊断——这些功能位于时序 Agent 中。
 """
 from __future__ import annotations
 

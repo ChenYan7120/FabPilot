@@ -1,4 +1,4 @@
-"""诊断 Agent：假设驱动的根因分析，由 Hypothesis-Evidence Memory
+"""诊断 Agent：假设驱动的根因分析，由假设-证据记忆
 （真实、确定性的状态机，通过工具驱动）支撑。
 """
 from __future__ import annotations

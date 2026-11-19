@@ -118,7 +118,7 @@ class ProcessConfiguration(Base):
 
 
 class AnomalyLabel(Base):
-    """由仿真器注入的 ground-truth 标签，仅用于评估。
+    """由仿真器注入的真实标签，仅用于评估。
 
     该表记录 *已知* 的异常窗口及其真实根因，使评估框架无需猜测即可对诊断准确率打分。
     """

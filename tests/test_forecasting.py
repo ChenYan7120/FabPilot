@@ -1,4 +1,4 @@
-"""预测模型注册表测试：真实 baseline 与仅接口适配器的对比。"""
+"""预测模型注册表测试：真实统计基线与适配器骨架的对比。"""
 from __future__ import annotations
 
 import numpy as np

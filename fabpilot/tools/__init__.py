@@ -1,4 +1,4 @@
-"""工具层：registry 以及 data / time-series / knowledge / general 工具的完整目录。"""
+"""工具层：注册表以及数据 / 时序 / 知识 / 通用工具的完整目录。"""
 from __future__ import annotations
 
 from fabpilot.tools import data_tools, general_tools, knowledge_tools, memory_tools, timeseries_tools
@@ -38,7 +38,7 @@ _ALL_TOOLS: list[Tool] = [
     general_tools.python_analysis,
     general_tools.chart,
     general_tools.report,
-    # 假设-证据 memory（Diagnosis Agent 内部使用）
+    # 假设-证据记忆（诊断 Agent 内部使用）
     memory_tools.add_hypothesis,
     memory_tools.add_evidence,
     memory_tools.add_pending_check,

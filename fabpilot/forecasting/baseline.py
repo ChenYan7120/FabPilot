@@ -1,6 +1,6 @@
-"""确定性的、依赖轻量的预测 baseline。
+"""确定性的、依赖轻量的预测基线。
 
-这是一个 *真实* 模型（不是占位符）：它在 lookback 窗口上拟合简单趋势并外推，因此整个 agent pipeline、评估指标和 demo 场景无需 PyTorch 即可端到端产出真实数值。真实工业模型（PatchTST、iTransformer 等）通过同一 registry 替换它。
+这是一个 *真实* 模型（不是占位符）：它在 lookback 窗口上拟合简单趋势并外推，因此整个 agent 流水线、评估指标和演示场景无需 PyTorch 即可端到端产出真实数值。真实工业模型（PatchTST、iTransformer 等）通过同一注册表替换它。
 """
 from __future__ import annotations
 

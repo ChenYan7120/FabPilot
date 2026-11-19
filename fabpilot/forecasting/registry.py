@@ -1,6 +1,6 @@
-"""统一的 Forecasting Model Registry。
+"""统一的预测模型注册表。
 
-PatchTST、iTransformer 或任意自定义模型都通过统一的 ``ForecastModel`` 接口接入，因此 Time-Series Agent 从不依赖具体实现。
+PatchTST、iTransformer 或任意自定义模型都通过统一的 ``ForecastModel`` 接口接入，因此时序 Agent 从不依赖具体实现。
 """
 from __future__ import annotations
 
@@ -36,7 +36,7 @@ class ForecastModelRegistry:
 
 
 def build_forecast_registry(settings: Settings | None = None) -> ForecastModelRegistry:
-    """包含已注册的确定性统计 baseline 与 adapter 骨架的 registry（adapter 仅在权重加载后才能运行）。"""
+    """包含已注册的确定性统计基线与适配器骨架的注册表（适配器仅在权重加载后才能运行）。"""
     settings = settings or get_settings()
     registry = ForecastModelRegistry()
     registry.register(StatisticalBaselineModel())

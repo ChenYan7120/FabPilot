@@ -1,8 +1,8 @@
-"""Hypothesis-Evidence Memory 工具。
+"""假设-证据记忆工具。
 
-这些是 Diagnosis Agent 的 *内部* 工具：它们修改确定性的
+这些是诊断 Agent 的 *内部* 工具：它们修改确定性的
 ``HypothesisEvidenceMemory``（而不是数据库）。把它们做成工具，可以让 ReAct
-循环以显式、可审计的步骤驱动 Observation -> Hypothesis -> Evidence -> Re-evaluation 循环，
+循环以显式、可审计的步骤驱动观察 -> 假设 -> 证据 -> 重新评估循环，
 而不是隐藏在 prompt 行为里。
 """
 from __future__ import annotations

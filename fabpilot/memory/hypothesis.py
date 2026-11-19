@@ -1,9 +1,9 @@
-"""Hypothesis-Evidence Memory。
+"""假设-证据记忆。
 
-Diagnosis Agent 的核心状态机。这是真实的代码 —— 状态迁移、证据关联和终止决策都是
+诊断 Agent 的核心状态机。这是真实的代码 —— 状态迁移、证据关联和终止决策都是
 确定性的，而不是 prompt 层面的声明：
 
-  Observation -> Hypothesis -> Additional Analysis -> Re-evaluation
+  观察 -> 假设 -> 进一步分析 -> 重新评估
 
 统计相关性只会被记录为 *evidence*，绝不会被当作已确认的因果：下面的 kind/status
 迁移仅仅把 tool 结果视为对某个明确陈述的 hypothesis 的支持或反驳材料。
@@ -81,7 +81,7 @@ class HypothesisEvidenceMemory:
         self.hypotheses: dict[str, Hypothesis] = {}
         self.evidence: dict[str, Evidence] = {}
 
-    # ---- hypothesis 生命周期 ----
+    # ---- 假设生命周期 ----
     def add_hypothesis(self, description: str, priority: float = 0.5) -> Hypothesis:
         hyp = Hypothesis(id=new_id("hyp"), description=description, priority=priority)
         self.hypotheses[hyp.id] = hyp
@@ -121,7 +121,7 @@ class HypothesisEvidenceMemory:
                 return
         raise KeyError(f"unknown pending check {check_id}")
 
-    # ---- evidence 生命周期 ----
+    # ---- 证据生命周期 ----
     def add_evidence(
         self,
         hypothesis_id: str,
@@ -169,7 +169,7 @@ class HypothesisEvidenceMemory:
 
     # ---- 确定性重新评估 ----
     def evaluate_hypothesis(self, hyp_id: str, support_threshold: float = 0.5) -> HypothesisStatus:
-        """根据其 evidence 和 pending checks 重新评估单个 hypothesis。"""
+        """根据其证据和待处理检查重新评估单个假设。"""
         hyp = self.hypotheses[hyp_id]
         refuting = [eid for eid in hyp.refuting_evidence_ids if self.evidence[eid].confidence >= support_threshold]
         supporting = [eid for eid in hyp.supporting_evidence_ids if self.evidence[eid].confidence >= support_threshold]
@@ -210,7 +210,7 @@ class HypothesisEvidenceMemory:
         if any_supported and not any_open:
             return "stop", "at least one hypothesis supported and no pending checks remain"
         if not any_active and not any_open:
-            # 所有 hypothesis 都已解决（refuted / inconclusive），无需再验证
+            # 所有假设都已解决（refuted / inconclusive），无需再验证
             return "stop", "all hypotheses resolved without remaining evidence to collect"
         return "continue", "active hypotheses still have pending checks"
 

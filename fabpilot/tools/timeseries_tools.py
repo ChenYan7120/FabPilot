@@ -1,8 +1,8 @@
 """时间序列分析工具。
 
-边界说明：forecasting 是 *纯回归*（委派给 forecast
-registry）；所有数值计算——基于残差/统计量的 anomaly detection、
-correlation、lag、描述性统计——都放在这里，由 Time-Series Agent 完成。
+边界说明：预测是 *纯回归*（委派给预测
+注册表）；所有数值计算——基于残差/统计量的异常检测、
+相关性、滞后、描述性统计——都放在这里，由时序 Agent 完成。
 这些工具都不会产出根因，它们产出的是数值 + 异常。
 """
 from __future__ import annotations

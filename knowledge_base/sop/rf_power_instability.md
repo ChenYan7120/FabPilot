@@ -1,15 +1,15 @@
-# RF Power Instability —— 排障 SOP
+# RF 功率不稳定 —— 排障 SOP
 
 ## 适用范围
-实际输送 RF 功率围绕其设定值波动的 etch 腔室。
+实际输送 RF 功率围绕其设定值波动的刻蚀腔室。
 
 ## 背景
-RF 功率不稳定通常由 match network 的阻抗失配、RF 发生器老化或腔室内打弧引起。
+RF 功率不稳定通常由匹配网络的阻抗失配、RF 发生器老化或腔室内打弧引起。
 它表现为 `rf_power`（以及耦合的 `bias_voltage`）的高方差振荡，
 而非干净的阶跃或单调漂移。
 
 ## 可观察特征
-- `rf_power` 方差相对 baseline 急剧增大。
+- `rf_power` 方差相对基线急剧增大。
 - `bias_voltage` 与 `rf_power` 同步波动。
 - 如果发生打弧，可能出现间歇性的 `vacuum_pressure` 尖峰。
 - 刻蚀速率和 CD 均匀性退化。
@@ -18,13 +18,13 @@ RF 功率不稳定通常由 match network 的阻抗失配、RF 发生器老化�
 1. 计算 `rf_power` 的滚动标准差；标记超过 z-score 阈值的时间窗。
 2. 检查 `bias_voltage` 是否跟随 `rf_power`（预期的耦合）。
 3. 寻找相关的 `vacuum_pressure` 尖峰 —— 这些指示打弧。
-4. 查看维护记录中 match-network 或发生器的维修历史。
+4. 查看维护记录中匹配网络或发生器的维修历史。
 
 ## 建议措施
-- 检查 match-network 调谐和线缆状况。
+- 检查匹配网络调谐和线缆状况。
 - 检查腔室内是否有聚合物积聚（打弧前兆）。
 - 如果 RF 发生器无法维持设定值，则更换它。
 
-## 关于 correlation 与 causation 的说明
-`rf_power` 和 `bias_voltage` 通过 plasma sheath 强耦合；
+## 关于相关性与因果的说明
+`rf_power` 和 `bias_voltage` 通过等离子体鞘层强耦合；
 两者同时不稳定，更符合真实的 RF 输送问题，而非单一传感器故障。

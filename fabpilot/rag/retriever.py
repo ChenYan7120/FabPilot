@@ -1,6 +1,6 @@
-"""混合检索：稠密（向量）+ 稀疏（BM25），结合 RRF 融合与 rerank。
+"""混合检索：稠密（向量）+ 稀疏（BM25），结合 RRF 融合与重排。
 
-这借鉴了 Ragent 的检索设计（稠密 + 关键词并行召回、RRF 融合、可选 rerank），用 Python 重新实现并限定于 FabPilot 的需求——这是设计模式的移植，而非代码移植。
+这借鉴了 Ragent 的检索设计（稠密 + 关键词并行召回、RRF 融合、可选重排），用 Python 重新实现并限定于 FabPilot 的需求——这是设计模式的移植，而非代码移植。
 """
 from __future__ import annotations
 

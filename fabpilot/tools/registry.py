@@ -22,7 +22,7 @@ class ToolContext:
     session_scope: Callable | None = None  # 生成 DB Session 的上下文管理器
     forecast_registry: Any = None
     knowledge_base: Any = None
-    memory: Any = None  # HypothesisEvidenceMemory（Diagnosis Agent 使用）
+    memory: Any = None  # 假设-证据记忆（诊断 Agent 使用）
     settings: Any = None
     chart_dir: str = "charts"
     report_dir: str = "reports"

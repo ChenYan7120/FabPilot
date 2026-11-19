@@ -1,4 +1,4 @@
-"""运行时装配：把 config、LLM、tools、forecasting、RAG、memory 以及
+"""运行时装配：把配置、LLM、工具、预测、RAG、记忆 以及
 LangGraph 图组装成一个 CLI / API / 评估层共用的单一对象。
 """
 from __future__ import annotations

@@ -1,4 +1,4 @@
-"""RAG pipeline：文档加载、chunking 与 KnowledgeBase facade。"""
+"""RAG 检索流水线：文档加载、分块与 KnowledgeBase 门面。"""
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -34,7 +34,7 @@ class Chunk:
 
 
 def split_text(text: str, chunk_size: int = 500, overlap: int = 60) -> list[str]:
-    """带重叠的、按句子/段落划分的 chunker。"""
+    """带重叠的、按句子/段落划分的分块器。"""
     text = text.strip()
     if not text:
         return []
@@ -88,7 +88,7 @@ def load_documents(kb_dir: Path) -> list[Chunk]:
 
 
 class KnowledgeBase:
-    """为 Knowledge Agent 提供的、对混合 retriever 的 facade。"""
+    """为知识 Agent 提供的、对混合检索器的门面。"""
 
     def __init__(self, retriever: HybridRetriever) -> None:
         self.retriever = retriever

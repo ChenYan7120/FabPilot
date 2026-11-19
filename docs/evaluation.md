@@ -1,8 +1,8 @@
 # FabPilot 评估
 
-evaluation 框架在 *真实* tools 之上衡量 *agent 系统* —— 包括路由、hypothesis-evidence
+评估框架在 *真实* 工具之上衡量 *agent 系统* —— 包括路由、假设-证据
 推理和 RAG。它**不会**伪造运行结果：每个指标都基于已填充种子数据的、
-确定性的 database 和 knowledge base 上的实际 tool 输出计算。
+确定性的数据库和知识库上的实际工具输出计算。
 
 ## 工作原理
 
@@ -14,46 +14,46 @@ fabpilot eval          # 运行所有配置 × 场景，写出 data/reports/eval
 
 1. 用合成的 fab 仿真数据填充一个**临时 SQLite 数据库**
    （`seed=42`、`n_equipment`、`days`）。
-2. 构建真实的 forecast registry 和 knowledge base。
+2. 构建真实的预测模型注册表和知识库。
 3. 为每个（config, scenario）组合构建一个全新的 runtime，使用 **`ScriptedLLM`** —— 一个
-   确定性的测试替身，会发出 scenario 所需的 tool 调用。
+   确定性的测试替身，会发出 scenario 所需的工具调用。
    这能把 agent 行为与模型的不确定性隔离开来。
 4. 调用 graph，并捕获最终的共享状态 + 墙钟时间。
-5. 从状态中计算指标（tool 历史、hypotheses、检索到的文档、
-   留出的 forecast 残差、注入的 anomaly 标签）。
+5. 从状态中计算指标（工具历史、假设、检索到的文档、
+   留出的预测残差、注入的异常标签）。
 
 ## 对比配置
 
-| 配置 | Supervisor | Diagnosis agent | RAG |
+| 配置 | Supervisor | 诊断 agent | RAG |
 |---|---|---|---|
 | `full` | ✅ | ✅ | ✅ |
 | `no_rag` | ✅ | ✅ | ❌ |
-| `baseline` | ❌（扁平 tool 循环） | ❌ | ❌ |
+| `baseline` | ❌（扁平工具循环） | ❌ | ❌ |
 
-`baseline` 配置在领域 tools 之上运行一个扁平的、单节点的 graph，没有分层路由、
-没有 hypothesis memory、也没有检索 —— 这是对「编排到底带来了什么」的一个诚实下限。
+`baseline` 配置在领域工具之上运行一个扁平的、单节点的 graph，没有分层路由、
+没有假设记忆、也没有检索 —— 这是对「编排到底带来了什么」的一个诚实下限。
 
-## 场景与 ground truth
+## 场景与真实值
 
-| 场景 | 任务类型 | Ground truth |
+| 场景 | 任务类型 | 真实值 |
 |---|---|---|
-| A | Forecast | 留出序列（在 `forecast_cut_fraction` 处切分） |
-| B | Anomaly detection | 仿真器注入的 anomaly 标签窗口 |
-| C | Diagnosis | 根因字符串 + 预期的 agent 路由 |
-| D | Knowledge | 预期的来源引用 |
+| A | 预测 | 留出序列（在 `forecast_cut_fraction` 处切分） |
+| B | 异常检测 | 仿真器注入的异常标签窗口 |
+| C | 诊断 | 根因字符串 + 预期的 agent 路由 |
+| D | 知识 | 预期的来源引用 |
 
 ## 指标类别
 
 | 类别 | 指标 | 计算依据 |
 |---|---|---|
 | 任务成功 | `task_success` | 最终 `status` + 非空报告 |
-| Tool 准确率 | `tool_accuracy`、`tool_error_rate` | tool 历史中的 `ok` 标志 |
+| 工具准确率 | `tool_accuracy`、`tool_error_rate` | 工具历史中的 `ok` 标志 |
 | 路由 | `routing_accuracy` | 委托的 agents 与预期对比 |
-| 诊断 | `diagnosis_top_k` | hypothesis 文本与 ground-truth 根因对比 |
-| 证据一致性 | `evidence_consistency` | 关联到真实 hypothesis ids 的证据 |
+| 诊断 | `diagnosis_top_k` | 假设文本与真实根因对比 |
+| 证据一致性 | `evidence_consistency` | 关联到真实假设 ids 的证据 |
 | RAG | `rag_recall_at_k` | 检索到的来源与预期来源对比 |
-| 时间序列 | `ts_forecast_mae`、`ts_forecast_mse`、`ts_anomaly_f1` | 留出的 forecast 残差 / 标签窗口 |
-| 效率 | `efficiency_tool_calls`、`efficiency_agent_steps`、`efficiency_wall_time_s` | tool 历史 / trace / 墙钟时间 |
+| 时间序列 | `ts_forecast_mae`、`ts_forecast_mse`、`ts_anomaly_f1` | 留出的预测残差 / 标签窗口 |
+| 效率 | `efficiency_tool_calls`、`efficiency_agent_steps`、`efficiency_wall_time_s` | 工具历史 / trace / 墙钟时间 |
 | 鲁棒性 | `robustness` | 无错误条目的干净完成 |
 
 不适用的指标（例如当 `use_supervisor=False` 时的 `routing_accuracy`，
@@ -68,7 +68,7 @@ fabpilot eval          # 运行所有配置 × 场景，写出 data/reports/eval
 
 ## 诚实的边界
 
-- `ts_forecast_mae` / `ts_forecast_mse` 来自**真实**的 statistical
-  baseline 模型在留出切分上的结果 —— 是真实数字，而非脚本化字符串。
-- `ts_anomaly_f1` 将标记出的点与仿真器注入的 ground-truth 窗口进行对比。
-- `ScriptedLLM` 只是 *LLM* 的测试替身；它调用的每个 tool 都是真实实现。
+- `ts_forecast_mae` / `ts_forecast_mse` 来自**真实**预测模型
+  在留出切分上的结果 —— 是真实数字，而非脚本化字符串。
+- `ts_anomaly_f1` 将标记出的点与仿真器注入的真实窗口进行对比。
+- `ScriptedLLM` 只是 *LLM* 的测试替身；它调用的每个工具都是真实实现。

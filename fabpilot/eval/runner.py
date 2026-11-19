@@ -54,7 +54,7 @@ class Harness:
     tmpdir: str
 
 
-# 扁平 baseline agent 可用的 tool（无 memory、无委派；由于 baseline config
+# 扁平 baseline agent 可用的工具（无记忆、无委派；由于 baseline config
 # 禁用了知识库，因此 RAG 不可用）。
 BASELINE_TOOLS = [
     "sensor_data",

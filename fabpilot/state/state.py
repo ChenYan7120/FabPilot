@@ -33,7 +33,7 @@ class AgentState(TypedDict, total=False):
     anomaly_results: Annotated[list[dict[str, Any]], operator.add]
     retrieved_docs: Annotated[list[dict[str, Any]], operator.add]
 
-    # 可替换 memory（Hypothesis-Evidence）
+    # 可替换记忆（假设-证据）
     hypotheses: list[dict[str, Any]]
     evidence: list[dict[str, Any]]
     pending_checks: list[dict[str, Any]]

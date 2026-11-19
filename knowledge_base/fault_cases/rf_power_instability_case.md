@@ -1,4 +1,4 @@
-# 故障案例：RF Power Instability（ETCH-03）
+# 故障案例：RF 功率不稳定（ETCH-03）
 
 ## 摘要
 ETCH-03 上 `rf_power` 的方差在约 3 小时内急剧增大，随后恢复正常，
@@ -6,16 +6,16 @@ ETCH-03 上 `rf_power` 的方差在约 3 小时内急剧增大，随后恢复正
 
 ## 证据链
 1. 在该时间窗内，`rf_power` 的滚动标准差超过了 3σ。
-2. `bias_voltage` 紧密跟随 `rf_power`（预期的 plasma-sheath 耦合）。
+2. `bias_voltage` 紧密跟随 `rf_power`（预期的等离子体鞘层耦合）。
 3. 间歇性的 `vacuum_pressure` 尖峰与 `rf_power` 的偏移重合 →
    打弧特征。
-4. 维护记录：match network 上次调谐是在 6 个月前。
+4. 维护记录：匹配网络上次调谐是在 6 个月前。
 
 ## 根因
-腔室内聚合物积聚导致间歇性打弧和 match-network 不稳定。
+腔室内聚合物积聚导致间歇性打弧和匹配网络不稳定。
 
 ## 处置
-清洁腔室；重新调谐 match network。不稳定现象未再出现。
+清洁腔室；重新调谐匹配网络。不稳定现象未再出现。
 
 ## 经验教训
 `rf_power` + `bias_voltage` 的不稳定*伴随* `vacuum_pressure` 尖峰，是打弧特征，

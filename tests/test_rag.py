@@ -1,4 +1,4 @@
-"""RAG pipeline 测试：chunking、混合检索与 doc_type 作用域。"""
+"""RAG 检索流水线测试：分块、混合检索与 doc_type 作用域。"""
 from __future__ import annotations
 
 from fabpilot.rag.pipeline import split_text, load_documents

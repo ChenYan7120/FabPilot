@@ -1,11 +1,11 @@
-# 故障案例：Vacuum Leak（ETCH-04）
+# 故障案例：真空泄漏（ETCH-04）
 
 ## 摘要
 ETCH-04 无法达到其正常的基准 `vacuum_pressure`；闲置期间压力上升速度快于规格。
 初期工艺未受影响。
 
 ## 证据链
-1. 基准 `vacuum_pressure` 比其历史 baseline 升高约 15%。
+1. 基准 `vacuum_pressure` 比其历史基线升高约 15%。
 2. 升压速率（leak-up）测试超出了腔体容积规格。
 3. 早期阶段 `gas_flow` 和 `rf_power` 处于标称值。
 4. 氦气检漏将泄漏定位到腔盖 O 型圈。
