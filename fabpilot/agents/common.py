@@ -1,4 +1,4 @@
-"""Small helpers shared by the agent node factories."""
+"""agent 节点工厂共享的小工具函数。"""
 from __future__ import annotations
 
 import re

@@ -1,13 +1,12 @@
-"""Hypothesis-Evidence Memory.
+"""Hypothesis-Evidence Memory。
 
-The Diagnosis Agent's core state machine. This is real code — status transitions,
-evidence linking and termination decisions are deterministic, not prompt claims:
+Diagnosis Agent 的核心状态机。这是真实的代码 —— 状态迁移、证据关联和终止决策都是
+确定性的，而不是 prompt 层面的声明：
 
   Observation -> Hypothesis -> Additional Analysis -> Re-evaluation
 
-A statistical correlation is recorded as *evidence*, never as confirmed causation:
-the kind/status transitions below only treat tool results as supporting or
-refuting material for an explicitly stated hypothesis.
+统计相关性只会被记录为 *evidence*，绝不会被当作已确认的因果：下面的 kind/status
+迁移仅仅把 tool 结果视为对某个明确陈述的 hypothesis 的支持或反驳材料。
 """
 from __future__ import annotations
 
@@ -82,7 +81,7 @@ class HypothesisEvidenceMemory:
         self.hypotheses: dict[str, Hypothesis] = {}
         self.evidence: dict[str, Evidence] = {}
 
-    # ---- hypothesis lifecycle ----
+    # ---- hypothesis 生命周期 ----
     def add_hypothesis(self, description: str, priority: float = 0.5) -> Hypothesis:
         hyp = Hypothesis(id=new_id("hyp"), description=description, priority=priority)
         self.hypotheses[hyp.id] = hyp
@@ -122,7 +121,7 @@ class HypothesisEvidenceMemory:
                 return
         raise KeyError(f"unknown pending check {check_id}")
 
-    # ---- evidence lifecycle ----
+    # ---- evidence 生命周期 ----
     def add_evidence(
         self,
         hypothesis_id: str,
@@ -163,14 +162,14 @@ class HypothesisEvidenceMemory:
         ev = self.evidence[evidence_id]
         ev.kind = kind
         hyp = self.hypotheses[ev.hypothesis_id]
-        # re-link cleanly
+        # 干净地重新关联
         hyp.supporting_evidence_ids = [e for e in hyp.supporting_evidence_ids if e != evidence_id]
         hyp.refuting_evidence_ids = [e for e in hyp.refuting_evidence_ids if e != evidence_id]
         self._link_evidence(ev.hypothesis_id, evidence_id, kind)
 
-    # ---- deterministic re-evaluation ----
+    # ---- 确定性重新评估 ----
     def evaluate_hypothesis(self, hyp_id: str, support_threshold: float = 0.5) -> HypothesisStatus:
-        """Re-evaluate one hypothesis from its evidence and pending checks."""
+        """根据其 evidence 和 pending checks 重新评估单个 hypothesis。"""
         hyp = self.hypotheses[hyp_id]
         refuting = [eid for eid in hyp.refuting_evidence_ids if self.evidence[eid].confidence >= support_threshold]
         supporting = [eid for eid in hyp.supporting_evidence_ids if self.evidence[eid].confidence >= support_threshold]
@@ -194,9 +193,9 @@ class HypothesisEvidenceMemory:
         return {hid: self.evaluate_hypothesis(hid, support_threshold) for hid in self.hypotheses}
 
     def termination_decision(self, remaining_budget: int) -> tuple[str, str]:
-        """Decide whether to keep investigating or conclude.
+        """决定是继续调查还是作出结论。
 
-        Returns (action, reason). ``action`` is one of "continue" | "stop".
+        返回 (action, reason)。``action`` 为 "continue" | "stop" 之一。
         """
         if remaining_budget <= 0:
             return "stop", "tool/iteration budget exhausted"
@@ -211,7 +210,7 @@ class HypothesisEvidenceMemory:
         if any_supported and not any_open:
             return "stop", "at least one hypothesis supported and no pending checks remain"
         if not any_active and not any_open:
-            # every hypothesis resolved (refuted / inconclusive) -> nothing more to verify
+            # 所有 hypothesis 都已解决（refuted / inconclusive），无需再验证
             return "stop", "all hypotheses resolved without remaining evidence to collect"
         return "continue", "active hypotheses still have pending checks"
 
@@ -221,7 +220,7 @@ class HypothesisEvidenceMemory:
             return None
         return max(supported, key=lambda h: h.priority)
 
-    # ---- serialisation ----
+    # ---- 序列化 ----
     def snapshot(self) -> dict[str, Any]:
         return {
             "hypotheses": [h.model_dump(mode="json") for h in self.hypotheses.values()],

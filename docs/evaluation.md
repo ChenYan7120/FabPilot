@@ -1,79 +1,74 @@
-# FabPilot Evaluation
+# FabPilot 评估
 
-The evaluation harness measures the *agent system* — routing, hypothesis-evidence
-reasoning, and RAG — on top of the *real* tools. It does **not** fabricate run
-results: every metric is computed from actual tool outputs over a seeded,
-deterministic database and knowledge base.
+evaluation 框架在 *真实* tools 之上衡量 *agent 系统* —— 包括路由、hypothesis-evidence
+推理和 RAG。它**不会**伪造运行结果：每个指标都基于已填充种子数据的、
+确定性的 database 和 knowledge base 上的实际 tool 输出计算。
 
-## How it works
+## 工作原理
 
 ```bash
 fabpilot eval          # runs all configs × scenarios, writes data/reports/evaluation.md + .json
 ```
 
-The harness (`fabpilot.eval.runner`):
+该框架（`fabpilot.eval.runner`）：
 
-1. Seeds a **temporary SQLite database** with the synthetic fab simulation
-   (`seed=42`, `n_equipment`, `days`).
-2. Builds the real forecast registry and knowledge base.
-3. Builds a fresh runtime per (config, scenario) with a **`ScriptedLLM`** — a
-   deterministic test double that emits the tool calls the scenario requires.
-   This isolates agent behaviour from model nondeterminism.
-4. Invokes the graph and captures the final shared state + wall time.
-5. Computes metrics from the state (tool history, hypotheses, retrieved docs,
-   held-out forecast residuals, injected anomaly labels).
+1. 用合成的 fab 仿真数据填充一个**临时 SQLite 数据库**
+   （`seed=42`、`n_equipment`、`days`）。
+2. 构建真实的 forecast registry 和 knowledge base。
+3. 为每个（config, scenario）组合构建一个全新的 runtime，使用 **`ScriptedLLM`** —— 一个
+   确定性的测试替身，会发出 scenario 所需的 tool 调用。
+   这能把 agent 行为与模型的不确定性隔离开来。
+4. 调用 graph，并捕获最终的共享状态 + 墙钟时间。
+5. 从状态中计算指标（tool 历史、hypotheses、检索到的文档、
+   留出的 forecast 残差、注入的 anomaly 标签）。
 
-## Comparison configs
+## 对比配置
 
-| Config | Supervisor | Diagnosis agent | RAG |
+| 配置 | Supervisor | Diagnosis agent | RAG |
 |---|---|---|---|
 | `full` | ✅ | ✅ | ✅ |
 | `no_rag` | ✅ | ✅ | ❌ |
-| `baseline` | ❌ (flat tool loop) | ❌ | ❌ |
+| `baseline` | ❌（扁平 tool 循环） | ❌ | ❌ |
 
-The `baseline` config runs a flat single-node graph over the domain tools with no
-hierarchical routing, no hypothesis memory and no retrieval — an honest lower
-bound for "what does the orchestration actually add?"
+`baseline` 配置在领域 tools 之上运行一个扁平的、单节点的 graph，没有分层路由、
+没有 hypothesis memory、也没有检索 —— 这是对「编排到底带来了什么」的一个诚实下限。
 
-## Scenarios and ground truth
+## 场景与 ground truth
 
-| Scenario | Task type | Ground truth |
+| 场景 | 任务类型 | Ground truth |
 |---|---|---|
-| A | Forecast | Held-out series (split at `forecast_cut_fraction`) |
-| B | Anomaly detection | Injected anomaly-label windows from the simulator |
-| C | Diagnosis | Root cause string + expected agent routing |
-| D | Knowledge | Expected source citations |
+| A | Forecast | 留出序列（在 `forecast_cut_fraction` 处切分） |
+| B | Anomaly detection | 仿真器注入的 anomaly 标签窗口 |
+| C | Diagnosis | 根因字符串 + 预期的 agent 路由 |
+| D | Knowledge | 预期的来源引用 |
 
-## Metric categories
+## 指标类别
 
-| Category | Metric(s) | Computed from |
+| 类别 | 指标 | 计算依据 |
 |---|---|---|
-| Task success | `task_success` | final `status` + non-empty report |
-| Tool accuracy | `tool_accuracy`, `tool_error_rate` | tool history `ok` flags |
-| Routing | `routing_accuracy` | delegated agents vs expected |
-| Diagnosis | `diagnosis_top_k` | hypothesis text vs ground-truth root cause |
-| Evidence consistency | `evidence_consistency` | evidence linked to real hypothesis ids |
-| RAG | `rag_recall_at_k` | retrieved sources vs expected sources |
-| Time-series | `ts_forecast_mae`, `ts_forecast_mse`, `ts_anomaly_f1` | held-out forecast residuals / label windows |
-| Efficiency | `efficiency_tool_calls`, `efficiency_agent_steps`, `efficiency_wall_time_s` | tool history / trace / wall clock |
-| Robustness | `robustness` | clean completion with no error entries |
+| 任务成功 | `task_success` | 最终 `status` + 非空报告 |
+| Tool 准确率 | `tool_accuracy`、`tool_error_rate` | tool 历史中的 `ok` 标志 |
+| 路由 | `routing_accuracy` | 委托的 agents 与预期对比 |
+| 诊断 | `diagnosis_top_k` | hypothesis 文本与 ground-truth 根因对比 |
+| 证据一致性 | `evidence_consistency` | 关联到真实 hypothesis ids 的证据 |
+| RAG | `rag_recall_at_k` | 检索到的来源与预期来源对比 |
+| 时间序列 | `ts_forecast_mae`、`ts_forecast_mse`、`ts_anomaly_f1` | 留出的 forecast 残差 / 标签窗口 |
+| 效率 | `efficiency_tool_calls`、`efficiency_agent_steps`、`efficiency_wall_time_s` | tool 历史 / trace / 墙钟时间 |
+| 鲁棒性 | `robustness` | 无错误条目的干净完成 |
 
-Metrics that don't apply to a config (e.g. `routing_accuracy` when
-`use_supervisor=False`, or `rag_recall_at_k` when `use_rag=False`) are `None` and
-excluded from per-config averages.
+不适用的指标（例如当 `use_supervisor=False` 时的 `routing_accuracy`，
+或当 `use_rag=False` 时的 `rag_recall_at_k`）为 `None`，并从各配置的平均值中排除。
 
-## Report output
+## 报告输出
 
-`write_report` produces both:
+`write_report` 会同时生成：
 
-- `data/reports/evaluation.md` — human-readable comparison tables.
-- `data/reports/evaluation.json` — machine-readable aggregates + per-run detail.
+- `data/reports/evaluation.md` —— 人类可读的对比表格。
+- `data/reports/evaluation.json` —— 机器可读的聚合数据 + 每次运行的明细。
 
-## Honest boundaries
+## 诚实的边界
 
-- `ts_forecast_mae` / `ts_forecast_mse` come from the **real** statistical
-  baseline model over a held-out split — genuine numbers, not scripted strings.
-- `ts_anomaly_f1` compares flagged points against the simulator's injected
-  ground-truth windows.
-- The `ScriptedLLM` is a test double only for the *LLM*; every tool it calls is
-  the real implementation.
+- `ts_forecast_mae` / `ts_forecast_mse` 来自**真实**的 statistical
+  baseline 模型在留出切分上的结果 —— 是真实数字，而非脚本化字符串。
+- `ts_anomaly_f1` 将标记出的点与仿真器注入的 ground-truth 窗口进行对比。
+- `ScriptedLLM` 只是 *LLM* 的测试替身；它调用的每个 tool 都是真实实现。

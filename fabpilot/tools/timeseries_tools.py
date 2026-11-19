@@ -1,9 +1,9 @@
-"""Time-series analysis tools.
+"""时间序列分析工具。
 
-Boundary note: forecasting is a *pure regression* (delegated to the forecast
-registry); everything numerical — anomaly detection on residuals/statistics,
-correlation, lag, descriptive statistics — lives here in the Time-Series Agent.
-None of these tools produce a root cause; they produce numbers + anomalies.
+边界说明：forecasting 是 *纯回归*（委派给 forecast
+registry）；所有数值计算——基于残差/统计量的 anomaly detection、
+correlation、lag、描述性统计——都放在这里，由 Time-Series Agent 完成。
+这些工具都不会产出根因，它们产出的是数值 + 异常。
 """
 from __future__ import annotations
 
@@ -41,25 +41,25 @@ def _load_series(
 
 
 # --------------------------------------------------------------------------- #
-# Forecast
+# 预测
 # --------------------------------------------------------------------------- #
 
 
 class ForecastInput(BaseModel):
-    equipment_id: str = Field(description="Equipment code, e.g. 'ETCH-01'.")
-    target: str = Field(description="Channel to forecast, e.g. 'gas_flow'.")
-    lookback: int | None = Field(default=None, description="Lookback window in points; defaults to config.")
-    horizon: int | None = Field(default=None, description="Forecast horizon in points; defaults to config.")
-    model: str | None = Field(default=None, description="Model name; defaults to config default.")
-    end: datetime | None = Field(default=None, description="Anchor: use data up to this timestamp.")
+    equipment_id: str = Field(description="设备编码，如 'ETCH-01'。")
+    target: str = Field(description="要预测的通道，如 'gas_flow'。")
+    lookback: int | None = Field(default=None, description="回看窗口（以点数为单位）；默认取自配置。")
+    horizon: int | None = Field(default=None, description="预测步长（以点数为单位）；默认取自配置。")
+    model: str | None = Field(default=None, description="模型名称；默认取自配置中的默认值。")
+    end: datetime | None = Field(default=None, description="锚点：仅使用截至该时间戳的数据。")
 
 
 @tool(
     name="forecast",
     description=(
-        "Forecast a future sensor channel using the registered forecasting model. "
-        "Pure regression: returns future values + prediction interval, no anomaly "
-        "interpretation. Forecast risk/abnormality must be assessed separately."
+        "使用已注册的预测模型预测未来某个 sensor 通道。"
+        "纯回归：返回未来值 + 预测区间，不做任何异常"
+        "解读。预测风险/异常需要另行评估。"
     ),
     input_model=ForecastInput,
     tags=["timeseries"],
@@ -116,19 +116,19 @@ def forecast(
 
 
 # --------------------------------------------------------------------------- #
-# Anomaly detection
+# 异常检测
 # --------------------------------------------------------------------------- #
 
 
 class AnomalyInput(BaseModel):
-    equipment_id: str = Field(description="Equipment code, e.g. 'ETCH-01'.")
-    channel: str = Field(description="Channel to scan, e.g. 'gas_flow'.")
+    equipment_id: str = Field(description="设备编码，如 'ETCH-01'。")
+    channel: str = Field(description="要扫描的通道，如 'gas_flow'。")
     method: str = Field(
         default="rolling_zscore",
-        description="One of 'rolling_zscore' or 'residual_zscore'.",
+        description="'rolling_zscore' 或 'residual_zscore' 之一。",
     )
-    window: int = Field(default=24, description="Rolling window size in points.")
-    threshold: float = Field(default=3.0, description="Z-score threshold for flagging.")
+    window: int = Field(default=24, description="滚动窗口大小（以点数为单位）。")
+    threshold: float = Field(default=3.0, description="用于标记异常的 Z-score 阈值。")
     start: datetime | None = None
     end: datetime | None = None
 
@@ -136,8 +136,8 @@ class AnomalyInput(BaseModel):
 @tool(
     name="anomaly_detection",
     description=(
-        "Detect anomalous points in a sensor channel via rolling / residual z-score. "
-        "Returns flagged timestamps with z-scores; it does NOT infer a root cause."
+        "通过滚动 / 残差 z-score 检测 sensor 通道中的异常点。"
+        "返回带有 z-score 的被标记时间戳；它不会推断根因。"
     ),
     input_model=AnomalyInput,
     tags=["timeseries"],
@@ -204,15 +204,15 @@ def anomaly_detection(
 
 
 # --------------------------------------------------------------------------- #
-# Correlation
+# 相关性
 # --------------------------------------------------------------------------- #
 
 
 class CorrelationInput(BaseModel):
-    equipment_id: str = Field(description="Equipment code, e.g. 'ETCH-01'.")
-    channel_a: str = Field(description="First channel.")
-    channel_b: str = Field(description="Second channel.")
-    method: str = Field(default="pearson", description="'pearson' or 'spearman'.")
+    equipment_id: str = Field(description="设备编码，如 'ETCH-01'。")
+    channel_a: str = Field(description="第一个通道。")
+    channel_b: str = Field(description="第二个通道。")
+    method: str = Field(default="pearson", description="'pearson' 或 'spearman'。")
     start: datetime | None = None
     end: datetime | None = None
 
@@ -220,8 +220,8 @@ class CorrelationInput(BaseModel):
 @tool(
     name="correlation",
     description=(
-        "Compute correlation between two sensor channels. Correlation is NOT "
-        "causation — pair with lag_analysis and domain reasoning before concluding."
+        "计算两个 sensor 通道之间的相关性。相关性不等于"
+        "因果性——在下结论前应结合 lag_analysis 和领域推理。"
     ),
     input_model=CorrelationInput,
     tags=["timeseries"],
@@ -255,15 +255,15 @@ def correlation(
 
 
 # --------------------------------------------------------------------------- #
-# Lag analysis
+# 滞后分析
 # --------------------------------------------------------------------------- #
 
 
 class LagInput(BaseModel):
-    equipment_id: str = Field(description="Equipment code, e.g. 'ETCH-01'.")
-    channel_a: str = Field(description="Lead channel (shifted).")
-    channel_b: str = Field(description="Response channel.")
-    max_lag: int = Field(default=24, description="Maximum lag in points to scan (both directions).")
+    equipment_id: str = Field(description="设备编码，如 'ETCH-01'。")
+    channel_a: str = Field(description="领先通道（被平移）。")
+    channel_b: str = Field(description="响应通道。")
+    max_lag: int = Field(default=24, description="要扫描的最大滞后（以点数为单位，双向）。")
     start: datetime | None = None
     end: datetime | None = None
 
@@ -271,9 +271,9 @@ class LagInput(BaseModel):
 @tool(
     name="lag_analysis",
     description=(
-        "Scan cross-correlation of channel_a shifted against channel_b across lags "
-        "[-max_lag, max_lag]. Positive best_lag means channel_a leads channel_b by "
-        "that many points (a hint, not proof, of causal direction)."
+        "扫描 channel_a 相对 channel_b 平移后的互相关，滞后范围"
+        "[-max_lag, max_lag]。best_lag 为正表示 channel_a 领先 channel_b"
+        "相应点数（这只是因果方向的线索，而非证明）。"
     ),
     input_model=LagInput,
     tags=["timeseries"],
@@ -322,20 +322,20 @@ def lag_analysis(
 
 
 # --------------------------------------------------------------------------- #
-# Statistical analysis
+# 统计分析
 # --------------------------------------------------------------------------- #
 
 
 class StatsInput(BaseModel):
-    equipment_id: str = Field(description="Equipment code, e.g. 'ETCH-01'.")
-    channel: str = Field(description="Channel to summarise.")
+    equipment_id: str = Field(description="设备编码，如 'ETCH-01'。")
+    channel: str = Field(description="要汇总的通道。")
     start: datetime | None = None
     end: datetime | None = None
 
 
 @tool(
     name="statistical_analysis",
-    description="Descriptive statistics of a channel (mean, std, quantiles, skewness, kurtosis).",
+    description="某通道的描述性统计（mean、std、分位数、skewness、kurtosis）。",
     input_model=StatsInput,
     tags=["timeseries"],
 )

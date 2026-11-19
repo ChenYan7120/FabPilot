@@ -1,9 +1,9 @@
-"""Hypothesis-Evidence Memory tools.
+"""Hypothesis-Evidence Memory 工具。
 
-These are the Diagnosis Agent's *internal* tools: they mutate the deterministic
-``HypothesisEvidenceMemory`` (not the database). Making them tools lets the ReAct
-loop drive the Observation -> Hypothesis -> Evidence -> Re-evaluation cycle as
-explicit, auditable steps instead of hidden prompt behaviour.
+这些是 Diagnosis Agent 的 *内部* 工具：它们修改确定性的
+``HypothesisEvidenceMemory``（而不是数据库）。把它们做成工具，可以让 ReAct
+循环以显式、可审计的步骤驱动 Observation -> Hypothesis -> Evidence -> Re-evaluation 循环，
+而不是隐藏在 prompt 行为里。
 """
 from __future__ import annotations
 
@@ -32,13 +32,13 @@ def _memory(ctx: ToolContext) -> HypothesisEvidenceMemory:
 
 
 class AddHypothesisInput(BaseModel):
-    description: str = Field(description="The hypothesis, stated as a falsifiable claim about a root cause.")
-    priority: float = Field(default=0.5, description="Priority in [0,1]; higher = investigate first.")
+    description: str = Field(description="该 hypothesis，表述为关于根因的可证伪断言。")
+    priority: float = Field(default=0.5, description="优先级，取值 [0,1]；数值越大越先调查。")
 
 
 @tool(
     name="add_hypothesis",
-    description="Record a new falsifiable root-cause hypothesis in the working memory.",
+    description="在工作 memory 中记录一个新的可证伪根因 hypothesis。",
     input_model=AddHypothesisInput,
     tags=["memory"],
 )
@@ -48,20 +48,20 @@ def add_hypothesis(ctx: ToolContext, description: str, priority: float = 0.5) ->
 
 
 class AddEvidenceInput(BaseModel):
-    hypothesis_id: str = Field(description="Hypothesis this evidence bears on.")
-    source_tool: str = Field(description="Tool that produced the observation (e.g. 'correlation').")
-    observation: str = Field(description="Concise factual observation, e.g. 'corr = 0.82'.")
+    hypothesis_id: str = Field(description="该 evidence 所支撑的 hypothesis。")
+    source_tool: str = Field(description="产生该观测的 tool（如 'correlation'）。")
+    observation: str = Field(description="简洁的事实性观测，如 'corr = 0.82'。")
     kind: str = Field(default="neutral", description="supporting | refuting | neutral")
-    confidence: float = Field(default=0.5, description="Confidence in [0,1].")
-    query_params: dict[str, Any] = Field(default_factory=dict, description="Tool arguments used.")
-    source_refs: list[str] = Field(default_factory=list, description="Doc / case citations.")
+    confidence: float = Field(default=0.5, description="置信度，取值 [0,1]。")
+    query_params: dict[str, Any] = Field(default_factory=dict, description="所使用的 tool 参数。")
+    source_refs: list[str] = Field(default_factory=list, description="文档 / 案例引用。")
 
 
 @tool(
     name="add_evidence",
     description=(
-        "Attach an evidence observation to a hypothesis. A correlation is recorded as "
-        "evidence, never as causation — the memory's deterministic evaluation decides status."
+        "将一条 evidence 观测附加到某个 hypothesis。correlation 只会被记录为"
+        "evidence，而不会被当作因果——状态由 memory 的确定性评估决定。"
     ),
     input_model=AddEvidenceInput,
     tags=["memory"],
@@ -96,15 +96,15 @@ def add_evidence(
 
 
 class AddPendingCheckInput(BaseModel):
-    hypothesis_id: str = Field(description="Hypothesis to verify.")
-    description: str = Field(description="What still needs to be checked.")
-    tool: str = Field(description="Tool to run for this check.")
-    query: dict[str, Any] = Field(default_factory=dict, description="Arguments for that tool.")
+    hypothesis_id: str = Field(description="要验证的 hypothesis。")
+    description: str = Field(description="还需要检查的内容。")
+    tool: str = Field(description="为该项检查运行的 tool。")
+    query: dict[str, Any] = Field(default_factory=dict, description="该 tool 的参数。")
 
 
 @tool(
     name="add_pending_check",
-    description="Register a verification step that must run before the hypothesis can be supported.",
+    description="注册一个验证步骤，必须在其运行后 hypothesis 才能被支持。",
     input_model=AddPendingCheckInput,
     tags=["memory"],
 )
@@ -119,14 +119,14 @@ def add_pending_check(
 
 
 class CompleteCheckInput(BaseModel):
-    hypothesis_id: str = Field(description="Hypothesis owning the check.")
-    check_id: str = Field(description="Pending check id.")
-    evidence_ids: list[str] = Field(default_factory=list, description="Evidence produced by the check.")
+    hypothesis_id: str = Field(description="拥有该项检查的 hypothesis。")
+    check_id: str = Field(description="待处理检查的 id。")
+    evidence_ids: list[str] = Field(default_factory=list, description="该项检查产生的 evidence。")
 
 
 @tool(
     name="complete_pending_check",
-    description="Mark a pending verification check as done and link the evidence it produced.",
+    description="将某项待处理的验证检查标记为已完成，并关联其产生的 evidence。",
     input_model=CompleteCheckInput,
     tags=["memory"],
 )
@@ -138,12 +138,12 @@ def complete_pending_check(
 
 
 class EvaluateHypothesisInput(BaseModel):
-    hypothesis_id: str = Field(description="Hypothesis to re-evaluate from its evidence.")
+    hypothesis_id: str = Field(description="要根据其 evidence 重新评估的 hypothesis。")
 
 
 @tool(
     name="evaluate_hypothesis",
-    description="Deterministically re-evaluate a hypothesis's status from its evidence and pending checks.",
+    description="根据其 evidence 和待处理检查，确定性地重新评估某个 hypothesis 的状态。",
     input_model=EvaluateHypothesisInput,
     tags=["memory"],
 )
@@ -158,7 +158,7 @@ class ListHypothesesInput(BaseModel):
 
 @tool(
     name="list_hypotheses",
-    description="Return the current hypotheses and their statuses from working memory.",
+    description="从工作 memory 中返回当前的 hypotheses 及其状态。",
     input_model=ListHypothesesInput,
     tags=["memory"],
 )

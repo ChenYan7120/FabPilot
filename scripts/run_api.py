@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Start the FastAPI server."""
+"""启动 FastAPI 服务器。"""
 from fabpilot.main import main
 
 if __name__ == "__main__":

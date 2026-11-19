@@ -1,1 +1,1 @@
-"""FabPilot web UI (Streamlit)."""
+"""FabPilot Web UI（Streamlit）。"""

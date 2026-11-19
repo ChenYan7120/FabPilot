@@ -1,8 +1,6 @@
-"""Hybrid retrieval: dense (vector) + sparse (BM25) with RRF fusion and rerank.
+"""混合检索：稠密（向量）+ 稀疏（BM25），结合 RRF 融合与 rerank。
 
-This mirrors the retrieval design of Ragent (dense + keyword parallel recall,
-RRF fusion, optional rerank) reimplemented in Python and scoped to FabPilot's
-needs — a design-pattern port, not a code port.
+这借鉴了 Ragent 的检索设计（稠密 + 关键词并行召回、RRF 融合、可选 rerank），用 Python 重新实现并限定于 FabPilot 的需求——这是设计模式的移植，而非代码移植。
 """
 from __future__ import annotations
 
@@ -22,7 +20,7 @@ def tokenize(text: str) -> list[str]:
 
 
 class BM25Index:
-    """Compact Okapi BM25 over tokenized documents."""
+    """基于分词文档的紧凑 Okapi BM25。"""
 
     def __init__(self, k1: float = 1.5, b: float = 0.75) -> None:
         self.k1 = k1

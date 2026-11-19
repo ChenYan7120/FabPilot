@@ -1,4 +1,4 @@
-"""Forecasting model registry tests: real baseline vs interface-only adapters."""
+"""预测模型注册表测试：真实 baseline 与仅接口适配器的对比。"""
 from __future__ import annotations
 
 import numpy as np
@@ -31,7 +31,7 @@ def test_baseline_linear_trend_extrapolates():
     model = StatisticalBaselineModel()
     req = _request()
     result = model.forecast(req)
-    # A perfectly linear increasing series → forecast continues increasing.
+    # 完全线性的递增序列 → 预测结果继续递增。
     assert result.forecast[-1].value > result.forecast[0].value
 
 

@@ -1,22 +1,21 @@
-# Fault Case: Vacuum Leak (ETCH-04)
+# 故障案例：Vacuum Leak（ETCH-04）
 
-## Summary
-ETCH-04 could not reach its normal base `vacuum_pressure`; pressure rose faster
-than spec during idle. Process was unaffected initially.
+## 摘要
+ETCH-04 无法达到其正常的基准 `vacuum_pressure`；闲置期间压力上升速度快于规格。
+初期工艺未受影响。
 
-## Evidence chain
-1. Base `vacuum_pressure` elevated ~15% above its historical baseline.
-2. Rate-of-rise (leak-up) test exceeded the chamber-volume specification.
-3. `gas_flow` and `rf_power` nominal during the early phase.
-4. Helium sniffer isolated the leak to a chamber lid O-ring.
+## 证据链
+1. 基准 `vacuum_pressure` 比其历史 baseline 升高约 15%。
+2. 升压速率（leak-up）测试超出了腔体容积规格。
+3. 早期阶段 `gas_flow` 和 `rf_power` 处于标称值。
+4. 氦气检漏将泄漏定位到腔盖 O 型圈。
 
-## Root cause
-Degraded chamber lid O-ring seal.
+## 根因
+腔盖 O 型圈密封老化。
 
-## Resolution
-O-ring replaced; base pressure and leak-up rate returned to specification.
+## 处置
+更换 O 型圈；基准压力和 leak-up 速率恢复到规格范围内。
 
-## Lesson
-Elevated `vacuum_pressure` is a symptom. A leak-up test (rate-of-rise) is what
-distinguishes a leak from pump degradation or outgassing before a root cause is
-assigned.
+## 经验教训
+`vacuum_pressure` 升高只是症状。在判定根因之前，leak-up 测试（升压速率）才是
+把泄漏与泵退化或放气区分开来的手段。

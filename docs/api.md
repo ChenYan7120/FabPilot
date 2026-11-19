@@ -1,11 +1,11 @@
 # FabPilot API
 
-FastAPI REST API exposing two surfaces:
+暴露两个界面的 FastAPI REST API：
 
-- **MES/FDC data + analytics** — real tools, no LLM required.
-- **Agent tasks** — run the full hierarchical agent system and fetch results.
+- **MES/FDC 数据 + analytics** —— 真实 tools，无需 LLM。
+- **Agent tasks** —— 运行完整的分层 agent 系统并获取结果。
 
-## Run
+## 运行
 
 ```bash
 # start Postgres (optional; SQLite also works)
@@ -19,44 +19,44 @@ fabpilot seed
 fabpilot api --host 0.0.0.0 --port 8000
 ```
 
-Interactive docs: http://localhost:8000/docs
+交互式文档：http://localhost:8000/docs
 
-## Endpoints
+## 端点
 
-### Health
+### 健康检查
 
 ```
 GET /api/v1/health
 ```
 
-### Equipment / FDC
+### 设备 / FDC
 
-| Method | Path | Description |
+| Method | Path | 描述 |
 |---|---|---|
-| GET | `/api/v1/equipment` | List all equipment |
-| GET | `/api/v1/equipment/{equipment_id}` | Equipment metadata / status |
-| GET | `/api/v1/equipment/{equipment_id}/sensor-data` | Sensor readings (optional `channel`, `start`, `end`, `limit`) |
-| GET | `/api/v1/equipment/{equipment_id}/alarms` | Alarm log |
-| GET | `/api/v1/equipment/{equipment_id}/maintenance` | Maintenance records |
-| GET | `/api/v1/fault-cases` | Historical fault cases (`equipment_id`, `limit`) |
+| GET | `/api/v1/equipment` | 列出所有设备 |
+| GET | `/api/v1/equipment/{equipment_id}` | 设备元数据 / 状态 |
+| GET | `/api/v1/equipment/{equipment_id}/sensor-data` | 传感器读数（可选 `channel`、`start`、`end`、`limit`） |
+| GET | `/api/v1/equipment/{equipment_id}/alarms` | 报警日志 |
+| GET | `/api/v1/equipment/{equipment_id}/maintenance` | 维护记录 |
+| GET | `/api/v1/fault-cases` | 历史故障案例（`equipment_id`、`limit`） |
 
-### Analytics
+### 分析
 
-| Method | Path | Description |
+| Method | Path | 描述 |
 |---|---|---|
-| POST | `/api/v1/forecast` | Forecast a channel (see `ForecastRequest`) |
-| POST | `/api/v1/anomaly-detection` | Detect anomalies (see `AnomalyRequest`) |
-| POST | `/api/v1/search` | Hybrid knowledge retrieval (see `SearchRequest`) |
+| POST | `/api/v1/forecast` | 对某个 channel 做 forecast（参见 `ForecastRequest`） |
+| POST | `/api/v1/anomaly-detection` | 检测 anomalies（参见 `AnomalyRequest`） |
+| POST | `/api/v1/search` | 混合知识检索（参见 `SearchRequest`） |
 
-### Agent tasks
+### Agent 任务
 
-| Method | Path | Description |
+| Method | Path | 描述 |
 |---|---|---|
-| POST | `/api/v1/tasks` | Run a natural-language task |
-| GET | `/api/v1/tasks` | List persisted task records |
-| GET | `/api/v1/tasks/{thread_id}` | Fetch a task result |
+| POST | `/api/v1/tasks` | 运行一个自然语言任务 |
+| GET | `/api/v1/tasks` | 列出已持久化的任务记录 |
+| GET | `/api/v1/tasks/{thread_id}` | 获取某个任务的结果 |
 
-## Request / response examples
+## 请求 / 响应示例
 
 ### Forecast
 
@@ -87,7 +87,7 @@ curl -X POST http://localhost:8000/api/v1/anomaly-detection \
   -d '{"equipment_id": "ETCH-01", "channel": "gas_flow", "method": "rolling_zscore", "window": 24, "threshold": 3.0}'
 ```
 
-### Agent task
+### Agent 任务
 
 ```bash
 curl -X POST http://localhost:8000/api/v1/tasks \
@@ -108,12 +108,12 @@ curl -X POST http://localhost:8000/api/v1/tasks \
 }
 ```
 
-## Architecture notes
+## 架构说明
 
-- `FabPilotService` builds non-LLM dependencies eagerly (database session scope,
-  forecast registry, knowledge base, tool registry) so the data/analytics
-  endpoints work without an API key.
-- The full `Runtime` (LLM + LangGraph) is built **lazily** on the first task
-  call, so starting the API never requires an LLM API key.
-- Task results are persisted through `SessionStore`
-  (`data/sessions.json`) and retrievable by `thread_id`.
+- `FabPilotService` 会预先构建非 LLM 依赖（database session scope、
+  forecast registry、knowledge base、tool registry），因此 data/analytics
+  端点无需 API key 即可工作。
+- 完整的 `Runtime`（LLM + LangGraph）在首次任务调用时才被**懒加载**构建，
+  因此启动 API 从不需要 LLM API key。
+- 任务结果通过 `SessionStore`（`data/sessions.json`）持久化，
+  并可通过 `thread_id` 检索。

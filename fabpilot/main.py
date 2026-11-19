@@ -1,12 +1,12 @@
-"""Command-line entry point for FabPilot.
+"""FabPilot 的命令行入口。
 
-Subcommands:
-  fabpilot init-db        Create the business database tables.
-  fabpilot seed           Generate synthetic industrial data + seed the DB.
-  fabpilot run TASK       Run a task through the hierarchical agent system.
-  fabpilot api            Start the FastAPI server.
-  fabpilot ui             Start the Streamlit UI.
-  fabpilot eval           Run the evaluation harness and write reports.
+子命令：
+  fabpilot init-db        创建业务数据库表。
+  fabpilot seed           生成合成工业数据并写入数据库。
+  fabpilot run TASK       通过层级式 agent 系统运行一个任务。
+  fabpilot api            启动 FastAPI 服务器。
+  fabpilot ui             启动 Streamlit UI。
+  fabpilot eval           运行评测 harness 并写出报告。
 """
 from __future__ import annotations
 

@@ -1,6 +1,6 @@
-"""SQLAlchemy ORM models for the simulated semiconductor MES/FDC domain.
+"""模拟半导体 MES/FDC 领域的 SQLAlchemy ORM 模型。
 
-All data is synthetic and represents no real enterprise system.
+所有数据均为合成数据，不代表任何真实的企业系统。
 """
 from __future__ import annotations
 
@@ -9,7 +9,7 @@ from datetime import datetime
 from sqlalchemy import JSON, DateTime, Float, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
-# Canonical multivariate sensor channels of the etch tool simulation.
+# 刻蚀设备仿真中的标准多元传感器通道。
 CHANNELS = [
     "pressure",
     "temperature",
@@ -118,10 +118,9 @@ class ProcessConfiguration(Base):
 
 
 class AnomalyLabel(Base):
-    """Ground-truth labels injected by the simulator, used only for evaluation.
+    """由仿真器注入的 ground-truth 标签，仅用于评估。
 
-    This table documents the *known* anomaly windows and their true root cause so
-    the evaluation framework can score diagnosis accuracy without guessing.
+    该表记录 *已知* 的异常窗口及其真实根因，使评估框架无需猜测即可对诊断准确率打分。
     """
 
     __tablename__ = "anomaly_labels"

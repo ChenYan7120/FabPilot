@@ -1,33 +1,30 @@
-# RF Power Instability — Troubleshooting SOP
+# RF Power Instability —— 排障 SOP
 
-## Applicability
-Etch chambers where delivered RF power fluctuates around its setpoint.
+## 适用范围
+实际输送 RF 功率围绕其设定值波动的 etch 腔室。
 
-## Background
-RF power instability is usually caused by an impedance mismatch in the match
-network, an aging RF generator, or arcing in the chamber. It appears as
-high-variance oscillation of `rf_power` (and the coupled `bias_voltage`),
-rather than a clean step or monotonic drift.
+## 背景
+RF 功率不稳定通常由 match network 的阻抗失配、RF 发生器老化或腔室内打弧引起。
+它表现为 `rf_power`（以及耦合的 `bias_voltage`）的高方差振荡，
+而非干净的阶跃或单调漂移。
 
-## Observable signatures
-- `rf_power` variance increases sharply relative to baseline.
-- `bias_voltage` fluctuates in lock-step with `rf_power`.
-- Possible intermittent `vacuum_pressure` spikes if arcing occurs.
-- Etch rate and CD uniformity degrade.
+## 可观察特征
+- `rf_power` 方差相对 baseline 急剧增大。
+- `bias_voltage` 与 `rf_power` 同步波动。
+- 如果发生打弧，可能出现间歇性的 `vacuum_pressure` 尖峰。
+- 刻蚀速率和 CD 均匀性退化。
 
-## Diagnostic procedure
-1. Compute the rolling standard deviation of `rf_power`; flag windows above a
-   z-score threshold.
-2. Check whether `bias_voltage` tracks `rf_power` (expected coupling).
-3. Look for correlated `vacuum_pressure` spikes — these indicate arcing.
-4. Review maintenance records for match-network or generator service history.
+## 诊断步骤
+1. 计算 `rf_power` 的滚动标准差；标记超过 z-score 阈值的时间窗。
+2. 检查 `bias_voltage` 是否跟随 `rf_power`（预期的耦合）。
+3. 寻找相关的 `vacuum_pressure` 尖峰 —— 这些指示打弧。
+4. 查看维护记录中 match-network 或发生器的维修历史。
 
-## Recommended actions
-- Verify the match-network tuning and cable condition.
-- Inspect the chamber for polymer build-up (arc precursor).
-- Replace the RF generator if it cannot hold the setpoint.
+## 建议措施
+- 检查 match-network 调谐和线缆状况。
+- 检查腔室内是否有聚合物积聚（打弧前兆）。
+- 如果 RF 发生器无法维持设定值，则更换它。
 
-## Correlation vs causation note
-`rf_power` and `bias_voltage` are strongly coupled by the plasma sheath;
-simultaneous instability in both is consistent with a genuine RF delivery
-problem rather than a single-sensor fault.
+## 关于 correlation 与 causation 的说明
+`rf_power` 和 `bias_voltage` 通过 plasma sheath 强耦合；
+两者同时不稳定，更符合真实的 RF 输送问题，而非单一传感器故障。

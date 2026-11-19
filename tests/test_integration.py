@@ -1,7 +1,7 @@
-"""Integration tests: real tools wired to a seeded SQLite database.
+"""集成测试：将真实 tool 接入种子化的 SQLite 数据库。
 
-These verify the boundary the spec cares about — tools connect to real internals
-(database, forecast registry, knowledge base), not placeholders.
+这些测试验证规格所关注的那条边界——tool 连接的是真实内部实现
+（数据库、预测注册表、知识库），而非占位符。
 """
 from __future__ import annotations
 

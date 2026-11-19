@@ -1,47 +1,45 @@
 # FabPilot
 
-**Hypothesis-Driven Multi-Agent System for Industrial Time-Series Analysis and Fault Diagnosis**
+**面向工业时序分析与故障诊断的 hypothesis 驱动多 agent 系统**
 
-FabPilot is a hierarchical multi-agent system (LangGraph) for semiconductor
-fab equipment. It combines time-series forecasting, anomaly detection,
-hypothesis-driven root-cause diagnosis, and retrieval-augmented reasoning behind
-a single Supervisor. It is inspired by Samsung's publicly-described
-*semiconductor defect agent* — the "name a hypothesis, then let evidence decide"
-pattern — reimplemented for industrial telemetry, with no proprietary code.
+FabPilot 是一个面向半导体 fab 设备的分层多 agent 系统（LangGraph）。它把
+time-series forecasting、anomaly detection、hypothesis 驱动的根因诊断和
+retrieval-augmented reasoning 统一整合在一个 Supervisor 之后。其灵感来自三星公开描述的
+*semiconductor defect agent* ——「先提出一个 hypothesis，再让证据来决定」的
+模式 —— 面向工业遥测数据重新实现，不含任何专有代码。
 
-> **Boundary honesty:** forecasting is a *pure regression* (a real statistical
-> baseline runs end-to-end; PatchTST/iTransformer are interface-only adapters),
-> and **correlation is never reported as causation**. These are the two lines the
-> whole design enforces.
+> **边界诚实性：** forecasting 是 *纯回归*（真实的 statistical baseline 端到端运行；
+> PatchTST/iTransformer 只是接口层的 adapter），并且 **correlation 绝不会被当作
+> causation 报告**。这是整个设计所坚守的两条底线。
 
 ---
 
-## Highlights
+## 亮点
 
-- **Dynamic routing, not a fixed pipeline** — the Supervisor runs its own ReAct
-  loop and decides delegation order at runtime.
-- **Real Hypothesis-Evidence Memory** — deterministic status transitions
-  (`candidate → active → supported/refuted/inconclusive`), implemented as memory
-  *tools*, not prompt-only claims.
-- **Tools connect to real internals** — typed, validated tools run against a real
-  database, forecast registry and knowledge base. No `pass` placeholders.
-- **RAG** — hybrid dense (hash-embedding) + sparse (BM25) retrieval with RRF
-  fusion, rerank, and source citations.
-- **Evaluation** — 3 configs × 4 scenarios, 9 metric categories computed from
-  *real* tool outputs (held-out forecast residuals, injected anomaly labels).
-- **DeepSeek by default** — any OpenAI-compatible LLM; a deterministic
-  `FakeLLM`/`ScriptedLLM` makes tests and eval fully offline.
+- **动态路由，而非固定 pipeline** —— Supervisor 运行自己的 ReAct
+  循环，在运行时决定委托顺序。
+- **真正的 Hypothesis-Evidence Memory** —— 确定性的状态转换
+  （`candidate → active → supported/refuted/inconclusive`），以 memory
+  *tools* 的形式实现，而非仅靠 prompt 的空口声明。
+- **Tools 连接真实内部实现** —— 经过类型校验的 tools 针对真实的
+  database、forecast registry 和 knowledge base 运行。没有任何 `pass` 占位符。
+- **RAG** —— 混合 dense（hash-embedding）+ sparse（BM25）检索，配合 RRF
+  融合、重排序与来源引用。
+- **评估** —— 3 种配置 × 4 个场景，9 个指标类别都基于
+  *真实* tool 输出计算（留出的 forecast 残差、注入的 anomaly 标签）。
+- **默认使用 DeepSeek** —— 兼容任意 OpenAI 兼容 LLM；确定性的
+  `FakeLLM`/`ScriptedLLM` 让测试和 eval 完全离线运行。
 
-## Architecture
+## 架构
 
 ```mermaid
 flowchart TB
-    USER["User task"] --> SUP["Supervisor (hierarchical ReAct)"]
+    USER["用户任务"] --> SUP["Supervisor (hierarchical ReAct)"]
 
     SUP -->|delegate_to_timeseries| TS["Time-Series Agent"]
     SUP -->|delegate_to_diagnosis| DX["Diagnosis Agent"]
     SUP -->|delegate_to_knowledge| KN["Knowledge Agent"]
-    SUP -->|finish| OUT["Final report"]
+    SUP -->|finish| OUT["最终报告"]
 
     TS --> TST["sensor_data · forecast · anomaly_detection · correlation · lag · stats"]
     DX --> DXT["sensor_data · alarms · maintenance · fault_case · correlation · lag"]
@@ -54,13 +52,13 @@ flowchart TB
     KNT --> KB[("Knowledge Base (RAG)")]
     DXT --> KB
 
-    SUP --> STATE["Shared LangGraph state (checkpointed)"]
+    SUP --> STATE["共享 LangGraph state（checkpointed）"]
 ```
 
-See [docs/architecture.md](docs/architecture.md) for the full topology, agent
-boundaries, ReAct loop and persistence model.
+完整的拓扑结构、agent 边界、ReAct 循环和持久化模型请参阅
+[docs/architecture.md](docs/architecture.md)。
 
-## Quick start
+## 快速开始
 
 ```bash
 # 1. Install
@@ -85,10 +83,10 @@ fabpilot ui           # http://localhost:8501
 fabpilot eval         # writes data/reports/evaluation.md + .json
 ```
 
-No DeepSeek key yet? The data/analytics endpoints and the evaluation harness work
-without one; only `fabpilot run` / the `/tasks` endpoint need an LLM.
+还没有 DeepSeek key？data/analytics 端点和 evaluation 框架无需 key 即可运行；
+只有 `fabpilot run` / `/tasks` 端点需要 LLM。
 
-## Project structure
+## 项目结构
 
 ```
 fabpilot/
@@ -110,57 +108,55 @@ tests/               # pytest suite
 scripts/             # thin entry-point wrappers
 ```
 
-## Agent boundaries
+## Agent 边界
 
-| Agent | Owns | Does **not** own |
-|---|---|---|
-| Supervisor | Task decomposition, delegation order, final report | Analysis, diagnosis, retrieval |
-| Time-Series | Forecast, anomaly *detection*, correlation, lag, stats | Root cause, causal claims |
-| Diagnosis | Hypotheses, evidence, re-evaluation, root cause | Raw retrieval, model training |
-| Knowledge | Document / case retrieval with citations | Interpretation |
+| Agent       | 负责                                                    | **不**负责   |
+| ----------- | ------------------------------------------------------- | ------------------ |
+| Supervisor  | 任务分解、委托顺序、最终报告                            | 分析、诊断、检索   |
+| Time-Series | Forecast、anomaly*detection*、correlation、lag、stats | 根因、因果性结论   |
+| Diagnosis   | hypotheses、证据、重新评估、根因                        | 原始检索、模型训练 |
+| Knowledge   | 带引用的文档 / 案例检索                                 | 解读               |
 
-## Configuration
+## 配置
 
-All settings use the `FABPILOT_` env prefix (see [`.env.example`](.env.example)).
-Key ones:
+所有设置都使用 `FABPILOT_` 环境变量前缀（参见 [`.env.example`](.env.example)）。
+关键项如下：
 
-| Variable | Default | Purpose |
-|---|---|---|
-| `FABPILOT_LLM_PROVIDER` | `openai_compatible` | `openai_compatible` or `fake` |
-| `FABPILOT_LLM_BASE_URL` | `https://api.deepseek.com/v1` | LLM endpoint |
-| `FABPILOT_LLM_API_KEY` | *(empty)* | your key — never commit |
-| `FABPILOT_DATABASE_URL` | Postgres URL | business DB (SQLite also works) |
-| `FABPILOT_EMBEDDING_PROVIDER` | `hash` | offline deterministic embeddings |
-| `FABPILOT_DEFAULT_FORECAST_MODEL` | `statistical_baseline` | default forecast model |
+| Variable                            | 默认值                          | 用途                              |
+| ----------------------------------- | ------------------------------- | --------------------------------- |
+| `FABPILOT_LLM_PROVIDER`           | `openai_compatible`           | `openai_compatible` 或 `fake` |
+| `FABPILOT_LLM_BASE_URL`           | `https://api.deepseek.com/v1` | LLM 端点                          |
+| `FABPILOT_LLM_API_KEY`            | *（空）*                      | 你的 key —— 切勿提交            |
+| `FABPILOT_DATABASE_URL`           | Postgres URL                    | 业务 DB（SQLite 也可用）          |
+| `FABPILOT_EMBEDDING_PROVIDER`     | `hash`                        | 离线确定性 embeddings             |
+| `FABPILOT_DEFAULT_FORECAST_MODEL` | `statistical_baseline`        | 默认 forecast 模型                |
 
-## What is real vs. interface-only
+## 哪些是真实实现 vs 仅接口
 
-- **Real, runs end-to-end:** Supervisor/specialist ReAct loops, hypothesis-evidence
-  memory, tool catalog, forecast statistical baseline, hybrid RAG, evaluation
-  metrics, data generator, API, UI.
-- **Interface-only skeletons:** `PatchTSTAdapter`, `iTransformerAdapter` raise
-  `ForecastModelNotAvailable` until weights are loaded. They demonstrate the
-  registry boundary but do not run a torch model (per project scope).
-- **Deterministic test doubles:** `FakeLLM` / `ScriptedLLM` replace only the *LLM*
-  in tests/eval; the tools they call are real.
+- **真实、端到端运行：** Supervisor/专业 agent 的 ReAct 循环、hypothesis-evidence
+  memory、tool catalog、forecast statistical baseline、混合 RAG、评估
+  指标、数据生成器、API、UI。
+- **仅接口的骨架：** `PatchTSTAdapter`、`iTransformerAdapter` 在加载权重之前会抛出
+  `ForecastModelNotAvailable`。它们演示了 registry 的边界，但不会运行 torch 模型（按项目范围）。
+- **确定性的测试替身：** `FakeLLM` / `ScriptedLLM` 只替换测试/eval 中的 *LLM*；
+  它们调用的 tools 是真实的。
 
-## Testing
+## 测试
 
 ```bash
 pytest -q
 ```
 
-The suite covers the hypothesis state machine, forecast registry (real baseline +
-adapter skeletons), RAG retrieval/chunking, shared state diffing, tool catalog
-completeness, metric/report rendering, and end-to-end tool integration over a
-seeded SQLite database.
+该测试套件覆盖 hypothesis 状态机、forecast registry（真实 baseline +
+adapter 骨架）、RAG 检索/chunking、共享状态 diffing、tool catalog
+完整性、metric/报告渲染，以及基于已填充种子数据的 SQLite 数据库的端到端 tool 集成。
 
-## Attribution
+## 出处
 
-Inspired by public descriptions of Samsung's semiconductor defect agent and the
-hybrid-retrieval design of [ragent](https://github.com/infiniflow/ragent).
-See [docs/research.md](docs/research.md).
+灵感来自三星 semiconductor defect agent 的公开描述，以及
+[ragent](https://github.com/infiniflow/ragent) 的混合检索设计。
+参见 [docs/research.md](docs/research.md)。
 
-## License
+## 许可证
 
 Apache-2.0

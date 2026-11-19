@@ -1,4 +1,4 @@
-"""Data layer: ORM models, synthetic fab simulation, DB access and read queries."""
+"""数据层：ORM 模型、合成 fab 仿真、数据库访问与读取查询。"""
 from __future__ import annotations
 
 from fabpilot.data.database import (

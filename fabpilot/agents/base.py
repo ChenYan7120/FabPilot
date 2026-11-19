@@ -1,9 +1,8 @@
-"""Shared ReAct loop used by the Supervisor and every specialised agent.
+"""Supervisor 与每个专职 agent 共用的 ReAct 循环。
 
-The loop is tool-agnostic: it asks the LLM to decide, executes the requested tools
-against the real registry, feeds observations back, and stops when the LLM stops
-calling tools (or a budget / loop guard fires). Every turn records an auditable
-decision summary + tool calls + results — never hidden chain-of-thought.
+该循环与工具无关：先让 LLM 做决策，再在真实注册表上执行所请求的工具，把观察结果
+反馈回去，直到 LLM 停止调用工具（或触发预算/循环保护）时结束。每一轮都会记录
+可审计的决策摘要 + 工具调用 + 结果——绝不隐藏思维链。
 """
 from __future__ import annotations
 

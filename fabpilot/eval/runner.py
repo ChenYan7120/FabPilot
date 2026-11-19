@@ -1,9 +1,9 @@
-"""Evaluation runner: wires three comparison configs against the four scenarios.
+"""评测 runner：将三个对比 config 与四个场景组合起来运行。
 
-The harness seeds one temporary SQLite database and one knowledge base, then for
-every (config, scenario) pair builds a *fresh* runtime (fresh ``ScriptedLLM``,
-fresh ``HypothesisEvidenceMemory``, fresh graph) so runs never contaminate each
-other. Metrics are computed from the real final state of each run.
+harness 先填充一个临时 SQLite 数据库和一个知识库，然后为每一对
+(config, scenario) 构建一个*全新*运行时（全新的 ``ScriptedLLM``、
+``HypothesisEvidenceMemory`` 和图），使各次运行互不污染。
+指标基于每次运行的真实最终状态计算。
 """
 from __future__ import annotations
 
@@ -54,8 +54,8 @@ class Harness:
     tmpdir: str
 
 
-# Tools the flat baseline agent may use (no memory, no delegation; RAG is absent
-# because the baseline config disables the knowledge base).
+# 扁平 baseline agent 可用的 tool（无 memory、无委派；由于 baseline config
+# 禁用了知识库，因此 RAG 不可用）。
 BASELINE_TOOLS = [
     "sensor_data",
     "forecast",
@@ -201,7 +201,7 @@ def run_scenario(config: EvalConfig, scenario: Scenario, harness: Harness) -> di
     try:
         final = runtime.graph.invoke(state, config={"configurable": {"thread_id": state["thread_id"]}})
         wall = time.perf_counter() - t0
-    except Exception as exc:  # a run must never abort the whole evaluation
+    except Exception as exc:  # 单次运行绝不能中止整个评测
         final = dict(state)
         final["status"] = "failed"
         final["errors"] = [{"error": f"{type(exc).__name__}: {exc}"}]

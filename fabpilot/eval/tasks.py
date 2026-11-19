@@ -1,14 +1,13 @@
-"""Evaluation scenarios (business tasks) with ground truth and scripted routing.
+"""评测场景（业务任务），带真值标签和脚本化路由。
 
-Each scenario scripts the *routing decisions* (which agent to delegate to, which
-tools to call and with which arguments) via a ``ScriptedLLM``. The tools themselves
-run for real against the seeded database / forecast registry / knowledge base, so
-metrics reflect real outputs. Four scenarios cover the system's core capabilities:
+每个场景通过 ``ScriptedLLM`` 编写*路由决策*脚本（委派给哪个 agent、
+调用哪些 tool 及参数）。tool 本身则针对种子数据库 / 预测注册表 /
+知识库真实运行，因此指标反映真实输出。四个场景覆盖系统核心能力：
 
-  A. forecast — pure regression (Time-Series Agent)
-  B. anomaly — anomaly detection (Time-Series Agent)
-  C. forecast-driven diagnosis — anomaly -> correlation -> hypothesis-evidence memory
-  D. knowledge QA — hybrid RAG retrieval with citations (Knowledge Agent)
+  A. 预测 —— 纯回归（Time-Series Agent）
+  B. 异常 —— 异常检测（Time-Series Agent）
+  C. 预测驱动的诊断 —— 异常 -> 相关性 -> 假设-证据 memory
+  D. 知识问答 —— 带引用的混合 RAG 检索（Knowledge Agent）
 """
 from __future__ import annotations
 
@@ -17,7 +16,7 @@ from typing import Callable
 
 from fabpilot.eval.scripted import Step, ScriptContext, stop, tool
 
-# Ground-truth root cause strings match fabpilot.data.generator.SCENARIOS.
+# 真值根因字符串与 fabpilot.data.generator.SCENARIOS 保持一致。
 MFC_DRIFT = "MFC mass flow controller drift / control valve stiction"
 
 
@@ -43,7 +42,7 @@ class Scenario:
 
 
 # --------------------------------------------------------------------------- #
-# A. Forecast
+# A. 预测
 # --------------------------------------------------------------------------- #
 
 
@@ -61,7 +60,7 @@ def _scenario_a() -> list[Step]:
 
 
 # --------------------------------------------------------------------------- #
-# B. Anomaly detection
+# B. 异常检测
 # --------------------------------------------------------------------------- #
 
 
@@ -84,7 +83,7 @@ def _scenario_b() -> list[Step]:
 
 
 # --------------------------------------------------------------------------- #
-# C. Forecast-driven diagnosis (hypothesis-evidence memory)
+# C. 预测驱动的诊断（假设-证据 memory）
 # --------------------------------------------------------------------------- #
 
 
@@ -152,7 +151,7 @@ def _scenario_c() -> list[Step]:
 
 
 # --------------------------------------------------------------------------- #
-# D. Knowledge QA
+# D. 知识问答
 # --------------------------------------------------------------------------- #
 
 
@@ -179,7 +178,7 @@ def _scenario_d() -> list[Step]:
 
 
 # --------------------------------------------------------------------------- #
-# Baseline scripts (flat single-agent ReAct, no routing / memory / RAG)
+# Baseline 脚本（扁平单 agent ReAct，无路由 / memory / RAG）
 # --------------------------------------------------------------------------- #
 
 

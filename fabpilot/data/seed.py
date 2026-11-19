@@ -1,4 +1,4 @@
-"""Seed the business database with the synthetic fab environment."""
+"""用合成 fab 环境填充业务数据库。"""
 from __future__ import annotations
 
 from fabpilot.data.database import create_all, get_engine
@@ -19,7 +19,7 @@ logger = get_logger(__name__)
 
 
 def seed(seed: int = 42, drop: bool = False, **gen_kwargs) -> SimulationBundle:
-    """Generate a simulation bundle and persist it to the configured database."""
+    """生成仿真数据包并持久化到已配置的数据库。"""
     engine = get_engine()
     if drop:
         from fabpilot.data.models import Base
@@ -63,11 +63,9 @@ def _insert(session: Session, b: SimulationBundle) -> None:
 
 
 def seed_into(session_scope, seed: int = 42, **gen_kwargs) -> SimulationBundle:
-    """Generate a simulation bundle and persist it through a provided session scope.
+    """生成仿真数据包并通过提供的 session scope 持久化。
 
-    The caller is responsible for creating the schema (e.g. via
-    ``build_session_scope(url, create_tables=True)``). Used by the evaluation
-    layer to seed a temporary database.
+    调用方负责创建 schema（例如通过 ``build_session_scope(url, create_tables=True)``）。评估层用它来填充临时数据库。
     """
     bundle = generate(seed=seed, **gen_kwargs)
     with session_scope() as session:

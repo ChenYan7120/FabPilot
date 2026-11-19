@@ -1,8 +1,7 @@
-"""Structured output models returned by tools.
+"""工具返回的结构化输出模型。
 
-The tool registry serialises these to JSON automatically; keeping them typed
-makes the evaluation layer and the API able to assert on real fields instead of
-opaque strings.
+工具注册表会自动将这些模型序列化为 JSON；保持类型化可以让评测层和
+API 基于真实字段进行断言，而不是面对不透明的字符串。
 """
 from __future__ import annotations
 
@@ -26,7 +25,7 @@ class SensorDataResult(BaseModel):
     end_ts: datetime | None = None
     n_points: int = 0
     channels: list[str] = Field(default_factory=list)
-    summary: dict[str, dict[str, float]] = Field(default_factory=dict)  # channel -> {mean,std,min,max}
+    summary: dict[str, dict[str, float]] = Field(default_factory=dict)  # channel -> {mean,std,min,max}（均值、标准差、最小值、最大值）
     last_10_points: list[dict[str, Any]] = Field(default_factory=list)
 
 

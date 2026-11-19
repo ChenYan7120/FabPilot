@@ -1,8 +1,7 @@
-"""Centralised configuration.
+"""集中式配置。
 
-All settings are read from environment variables / a `.env` file using the
-``FABPILOT_`` prefix so the application behaviour is fully controllable from
-one place. No secret should ever be committed to the repository.
+所有设置都通过 ``FABPILOT_`` 前缀从环境变量 / `.env` 文件中读取，因此应用行为可以
+集中在一处控制。任何密钥都不应提交到代码仓库。
 """
 from __future__ import annotations
 
@@ -37,29 +36,29 @@ class Settings(BaseSettings):
     embedding_model: str = "text-embedding-3-small"
     embedding_dim: int = 1024
 
-    # ---- Business database ----
+    # ---- 业务数据库 ----
     database_url: str = "postgresql+psycopg://fabpilot:fabpilot@localhost:5432/fabpilot"
 
-    # ---- Vector store ----
+    # ---- 向量存储 ----
     vector_store: str = "memory"  # memory | pgvector
     pgvector_connection: str = "postgresql+psycopg://fabpilot:fabpilot@localhost:5432/fabpilot"
 
-    # ---- ReAct budgets / loop safety ----
+    # ---- ReAct 预算 / 循环安全 ----
     supervisor_max_iterations: int = 10
     agent_max_iterations: int = 8
     tool_budget: int = 30
     loop_detection_window: int = 4
 
-    # ---- Forecasting ----
+    # ---- 预测 ----
     default_forecast_model: str = "statistical_baseline"
     forecast_lookback: int = 96
     forecast_horizon: int = 16
 
-    # ---- Paths ----
+    # ---- 路径 ----
     knowledge_base_dir: str = "knowledge_base"
     data_dir: str = "data"
     log_level: str = "INFO"
-    checkpoint_sqlite: str = ""  # optional sqlite path for LangGraph checkpoints ("" = in-memory)
+    checkpoint_sqlite: str = ""  # 可选的 sqlite 路径，用于 LangGraph checkpoint（"" = 内存存储）
 
     @property
     def knowledge_base_path(self) -> Path:

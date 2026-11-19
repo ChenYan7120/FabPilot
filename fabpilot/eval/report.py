@@ -1,8 +1,8 @@
-"""Renders evaluation output to JSON and Markdown.
+"""将评测输出渲染为 JSON 和 Markdown。
 
-The runner returns raw per-run metrics; this module aggregates them per config
-and produces a human-readable comparison table. Metrics that do not apply to a
-scenario / config are ``None`` and excluded from aggregates.
+runner 返回每次运行的原始指标；本模块按 config 聚合这些指标，
+并生成易读的对比表。对某场景 / config 不适用的指标为 ``None``，
+并从聚合中排除。
 """
 from __future__ import annotations
 
@@ -46,8 +46,8 @@ def aggregate(payload: dict[str, Any]) -> dict[str, Any]:
             for metric in NUMERIC_METRICS
         }
 
-    # Configs that have a value for every scenario (task success / robustness are
-    # always defined; here we just keep everything).
+    # 在每个场景上都有取值的 config（task success / robustness 始终有定义；
+    # 这里我们直接全部保留）。
     return {
         "configs": configs,
         "scenarios": payload["scenarios"],

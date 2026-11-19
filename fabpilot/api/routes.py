@@ -1,4 +1,4 @@
-"""FastAPI routes: MES/FDC data surface + agent task surface."""
+"""FastAPI 路由：MES/FDC 数据接口 + agent 任务接口。"""
 from __future__ import annotations
 
 from fastapi import APIRouter, HTTPException, Query
@@ -18,7 +18,7 @@ router = APIRouter(prefix="/api/v1", tags=["fabpilot"])
 
 
 def _service() -> FabPilotService:
-    # Bound lazily so the app factory can inject a custom service in tests.
+    # 惰性绑定，使应用工厂可在测试中注入自定义 service。
     from fabpilot.api.app import current_service  # noqa: PLC0415
 
     return current_service()
@@ -29,7 +29,7 @@ def health() -> dict[str, str]:
     return {"status": "ok"}
 
 
-# ---- equipment / FDC ------------------------------------------------------ #
+# ---- 设备 / FDC ------------------------------------------------------ #
 
 @router.get("/equipment")
 def list_equipment() -> dict[str, list[dict]]:
@@ -104,7 +104,7 @@ def fault_cases(equipment_id: str | None = Query(default=None), limit: int = Que
     return _service().fault_cases(equipment_id=equipment_id, limit=limit)
 
 
-# ---- analytics ------------------------------------------------------------ #
+# ---- 分析 ------------------------------------------------------------ #
 
 @router.post("/forecast")
 def forecast(body: ForecastRequest) -> dict:
@@ -142,7 +142,7 @@ def search(body: SearchRequest) -> dict:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
 
 
-# ---- agent tasks ---------------------------------------------------------- #
+# ---- agent 任务 ---------------------------------------------------------- #
 
 @router.post("/tasks", response_model=TaskResponse, responses={400: {"model": ErrorResponse}})
 def run_task(body: TaskRequest) -> TaskResponse:

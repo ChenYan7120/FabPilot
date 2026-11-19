@@ -1,4 +1,4 @@
-"""RAG pipeline: document loading, chunking and the KnowledgeBase facade."""
+"""RAG pipeline：文档加载、chunking 与 KnowledgeBase facade。"""
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -34,7 +34,7 @@ class Chunk:
 
 
 def split_text(text: str, chunk_size: int = 500, overlap: int = 60) -> list[str]:
-    """Sentence/paragraph-aware chunker with overlap."""
+    """带重叠的、按句子/段落划分的 chunker。"""
     text = text.strip()
     if not text:
         return []
@@ -62,10 +62,9 @@ def split_text(text: str, chunk_size: int = 500, overlap: int = 60) -> list[str]
 
 
 def load_documents(kb_dir: Path) -> list[Chunk]:
-    """Load markdown/text documents from a knowledge-base directory tree.
+    """从知识库目录树加载 markdown/文本文档。
 
-    The immediate parent directory name is used as ``doc_type``
-    (e.g. sop / alarm / fault_cases) so retrieval can be scoped.
+    使用直接父目录名作为 ``doc_type``（例如 sop / alarm / fault_cases），以便检索可以限定范围。
     """
     chunks: list[Chunk] = []
     for path in sorted(kb_dir.rglob("*")):
@@ -89,7 +88,7 @@ def load_documents(kb_dir: Path) -> list[Chunk]:
 
 
 class KnowledgeBase:
-    """Facade over the hybrid retriever for the Knowledge Agent."""
+    """为 Knowledge Agent 提供的、对混合 retriever 的 facade。"""
 
     def __init__(self, retriever: HybridRetriever) -> None:
         self.retriever = retriever

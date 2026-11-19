@@ -1,4 +1,4 @@
-"""Session memory: per-session message history (short-term working memory)."""
+"""Session memory：每个 session 的消息历史（短期工作记忆）。"""
 from __future__ import annotations
 
 from typing import Any

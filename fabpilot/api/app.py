@@ -1,8 +1,7 @@
-"""FastAPI app factory.
+"""FastAPI 应用工厂。
 
-The service is created lazily on first request so importing / creating the app
-never touches the database, knowledge base or LLM. Tests can inject a custom
-service via ``create_app(service=...)``.
+service 在首次请求时才惰性创建，因此导入/创建应用时
+不会接触数据库、知识库或 LLM。测试可通过 ``create_app(service=...)`` 注入自定义 service。
 """
 from __future__ import annotations
 
@@ -31,7 +30,7 @@ def create_app(service: FabPilotService | None = None, title: str = "FabPilot AP
 
     @asynccontextmanager
     async def lifespan(app: FastAPI):
-        # Warm the service eagerly if it was injected; otherwise stay lazy.
+        # 若注入了 service 则立即预热；否则保持惰性创建。
         if service is not None:
             current_service()
         yield

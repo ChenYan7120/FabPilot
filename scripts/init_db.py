@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Create the business database tables."""
+"""创建业务数据库表。"""
 from fabpilot.main import main
 
 if __name__ == "__main__":

@@ -1,23 +1,22 @@
-# Fault Case: RF Power Instability (ETCH-03)
+# 故障案例：RF Power Instability（ETCH-03）
 
-## Summary
-`rf_power` variance on ETCH-03 increased sharply for ~3 hours and returned to
-normal, correlated with intermittent `vacuum_pressure` spikes.
+## 摘要
+ETCH-03 上 `rf_power` 的方差在约 3 小时内急剧增大，随后恢复正常，
+并与间歇性的 `vacuum_pressure` 尖峰相关。
 
-## Evidence chain
-1. Rolling std of `rf_power` exceeded 3σ during the window.
-2. `bias_voltage` tracks `rf_power` closely (expected plasma-sheath coupling).
-3. Intermittent `vacuum_pressure` spikes coincide with `rf_power` excursions →
-   arcing signature.
-4. Maintenance record: match network last tuned 6 months prior.
+## 证据链
+1. 在该时间窗内，`rf_power` 的滚动标准差超过了 3σ。
+2. `bias_voltage` 紧密跟随 `rf_power`（预期的 plasma-sheath 耦合）。
+3. 间歇性的 `vacuum_pressure` 尖峰与 `rf_power` 的偏移重合 →
+   打弧特征。
+4. 维护记录：match network 上次调谐是在 6 个月前。
 
-## Root cause
-Polymer build-up in the chamber caused intermittent arcing and match-network
-instability.
+## 根因
+腔室内聚合物积聚导致间歇性打弧和 match-network 不稳定。
 
-## Resolution
-Chamber clean; match network re-tuned. Instability did not recur.
+## 处置
+清洁腔室；重新调谐 match network。不稳定现象未再出现。
 
-## Lesson
-`rf_power` + `bias_voltage` instability *with* `vacuum_pressure` spikes is an
-arcing signature, not a single-sensor fault.
+## 经验教训
+`rf_power` + `bias_voltage` 的不稳定*伴随* `vacuum_pressure` 尖峰，是打弧特征，
+而非单一传感器故障。

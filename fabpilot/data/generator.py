@@ -1,9 +1,6 @@
-"""Reproducible semiconductor fabrication (etch tool) simulation.
+"""可复现的半导体制造（刻蚀设备）仿真。
 
-Generates multivariate sensor time series with *known* injected fault windows so
-that evaluation can be scored against ground truth. Everything is synthetic and
-explicitly does NOT represent any real enterprise data or a fully validated
-physical process model.
+生成带 *已知* 注入故障窗口的多元传感器时间序列，使评估可以对照 ground truth 进行打分。所有数据均为合成数据，明确不代表任何真实的企业数据，也不是经过完整验证的物理过程模型。
 """
 from __future__ import annotations
 
@@ -24,7 +21,7 @@ class FaultScenario:
     affected_channels: tuple[str, ...]
     alarm_codes: tuple[str, ...]
     description: str
-    injectors: dict[str, tuple[str, float]] = field(default_factory=dict)  # channel -> (kind, magnitude)
+    injectors: dict[str, tuple[str, float]] = field(default_factory=dict)  # channel -> (类型, 幅度)
     severity: str = "MAJOR"
 
 
@@ -67,7 +64,7 @@ SCENARIOS: dict[str, FaultScenario] = {
     ),
 }
 
-# channel -> (baseline, slow sinusoidal amplitude, gaussian noise std)
+# channel -> (基线值, 慢正弦幅度, 高斯噪声标准差)
 CHANNEL_BASELINE: dict[str, tuple[float, float, float]] = {
     "pressure": (30.0, 2.0, 0.4),
     "temperature": (60.0, 1.0, 0.15),
@@ -78,8 +75,8 @@ CHANNEL_BASELINE: dict[str, tuple[float, float, float]] = {
     "helium_flow": (10.0, 0.3, 0.1),
 }
 
-# Deterministic fault schedule per equipment: (scenario, start_fraction, duration_fraction).
-# ETCH-03 keeps one fault spanning the final 24h so demo scenario C has a live anomaly.
+# 每台设备的确定性故障排程：(scenario, start_fraction, duration_fraction)。
+# ETCH-03 保留一个跨越最后 24 小时的故障，使 demo 场景 C 有一个实时异常。
 _SCHEDULE: dict[str, list[tuple[str, float, float]]] = {
     "ETCH-01": [("mfc_flow_drift", 0.10, 0.05), ("sensor_bias", 0.45, 0.05)],
     "ETCH-02": [("vacuum_leak", 0.20, 0.08), ("rf_power_instability", 0.55, 0.08)],
@@ -126,7 +123,7 @@ def generate(
     interval_minutes: int = 5,
     start: datetime | None = None,
 ) -> SimulationBundle:
-    """Generate the full synthetic fab environment."""
+    """生成完整的合成 fab 环境。"""
     rng = np.random.default_rng(seed)
     start = start or datetime(2026, 1, 5, 0, 0, 0)
     total_points = int(days * 24 * 60 / interval_minutes)
@@ -160,16 +157,16 @@ def generate(
             }
         )
 
-        # Build per-channel base signals.
+        # 构建每个 channel 的基础信号。
         series: dict[str, np.ndarray] = {}
         for c in CHANNELS:
             base, amp, noise = CHANNEL_BASELINE[c]
             phase = rng.uniform(0, 2 * np.pi)
-            period = rng.choice([24.0, 12.0, 8.0])  # hours
+            period = rng.choice([24.0, 12.0, 8.0])  # 小时
             t_h = np.arange(total_points) * interval_minutes / 60.0
             series[c] = base + amp * np.sin(2 * np.pi * t_h / period + phase) + rng.normal(0, noise, total_points)
 
-        # Inject scheduled faults.
+        # 注入排程故障。
         scenario_ids: dict[str, int] = {}
         case_counter = 0
         for scenario_name, start_frac, dur_frac in _SCHEDULE.get(eq_id, []):
@@ -207,7 +204,7 @@ def generate(
                 }
             )
 
-            # Alarms during the fault window.
+            # 故障窗口期间的告警。
             n_alarms = int(rng.integers(2, 5))
             for _ in range(n_alarms):
                 a_idx = int(rng.integers(s_idx, e_idx))
@@ -223,7 +220,7 @@ def generate(
                     }
                 )
 
-            # Corrective maintenance + a fault case after the fault.
+            # 故障后的纠正性维护 + 一个故障案例。
             maint_rows.append(
                 {
                     "equipment_id": eq_id,
@@ -248,13 +245,13 @@ def generate(
                 }
             )
 
-        # Reading rows.
+        # 读数行。
         for i in range(total_points):
             reading_rows.append(
                 {"equipment_id": eq_id, "ts": index[i].to_pydatetime(), **{c: float(series[c][i]) for c in CHANNELS}}
             )
 
-        # Periodic preventive maintenance.
+        # 周期性预防性维护。
         pm_every = total_points // 6
         for k in range(1, 6):
             pm_idx = k * pm_every
@@ -269,7 +266,7 @@ def generate(
                 }
             )
 
-        # Process configurations.
+        # 工艺配置。
         cfg_rows.append(
             {
                 "equipment_id": eq_id,

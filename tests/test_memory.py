@@ -1,6 +1,6 @@
-"""Hypothesis-Evidence Memory state machine tests.
+"""Hypothesis-Evidence Memory 状态机测试。
 
-These verify the *real* deterministic status transitions, not prompt behaviour.
+这些测试验证*真实*的确定性状态转换，而非 prompt 行为。
 """
 from __future__ import annotations
 
@@ -83,12 +83,12 @@ def test_snapshot_roundtrip():
 
 
 def test_correlation_alone_does_not_support_causal_claim():
-    """A correlation can be *supporting evidence* for a hypothesis, but it never
-    resolves the hypothesis by itself while a causal check is still pending."""
+    """相关性可以作为某个 hypothesis 的*支持证据*，但只要因果性检查仍处于
+    待处理状态，它自身就永远无法终结该 hypothesis。"""
     mem = HypothesisEvidenceMemory()
     h = mem.add_hypothesis("pressure drop causes flow drift")
     mem.add_evidence(h.id, "correlation", {"a": "flow", "b": "pressure"}, "r=0.9", kind=EvidenceKind.SUPPORTING, confidence=0.9)
-    # A causal confirmation is still an open, pending check.
+    # 因果性确认仍是一项未完成、待处理的检查。
     mem.add_pending_check(h.id, "verify lead/lag ordering", "lag_analysis", {"a": "flow", "b": "pressure"})
-    # Correlation alone → still ACTIVE (not SUPPORTED), because causation is unproven.
+    # 仅凭相关性 → 仍为 ACTIVE（而非 SUPPORTED），因为因果关系尚未证实。
     assert mem.evaluate_hypothesis(h.id) == HypothesisStatus.ACTIVE

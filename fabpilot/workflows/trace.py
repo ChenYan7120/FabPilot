@@ -1,11 +1,11 @@
-"""Audit-trail formatting for a finished FabPilot run."""
+"""已完成 FabPilot 运行的审计轨迹格式化。"""
 from __future__ import annotations
 
 from typing import Any
 
 
 def render_trace(state: dict[str, Any]) -> str:
-    """Render the decision / delegation / tool-call trail as Markdown."""
+    """将决策 / 委托 / 工具调用轨迹渲染为 Markdown。"""
     lines: list[str] = ["## Execution trace", ""]
 
     for rec in state.get("delegation_records", []):

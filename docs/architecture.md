@@ -1,32 +1,29 @@
-# FabPilot Architecture
+# FabPilot 架构
 
-FabPilot is a **hypothesis-driven multi-agent system** for industrial time-series
-forecasting and fault diagnosis, targeting semiconductor fab equipment (etch
-chambers). It is a hierarchical LangGraph system: one Supervisor orchestrates
-three specialist agents through a shared, checkpointed state.
+FabPilot 是一个面向工业时序 forecasting 和故障诊断的 **hypothesis 驱动的多 agent 系统**，
+针对半导体 fab 设备（etch 腔室）。它是一个分层 LangGraph 系统：一个 Supervisor 通过
+共享的、checkpointed 状态编排三个专业 agent。
 
-## Design principles
+## 设计原则
 
-1. **Dynamic routing, not a fixed pipeline.** The Supervisor runs its own ReAct
-   loop and decides *at runtime* which specialist to delegate to and in what
-   order. Nothing is hard-wired.
-2. **Real Hypothesis-Evidence Memory.** The Diagnosis Agent's memory is a
-   deterministic state machine (`candidate → active → supported / refuted /
-   inconclusive`), not a prompt-only claim. Statistical correlations are recorded
-   as *evidence*, never as confirmed causation.
-3. **Tools connect to real internals.** Every tool validates typed arguments and
-   runs against the real database, forecast registry, or knowledge base. There
-   are no `pass` placeholders in the execution path.
-4. **A single forecast-model boundary.** Forecasting is a *pure regression* with
-   no anomaly interpretation; anomaly detection, statistics and diagnosis live in
-   the agents.
+1. **动态路由，而非固定 pipeline。** Supervisor 运行自己的 ReAct
+   循环，并在*运行时*决定委托给哪个专业 agent、按什么顺序。没有任何硬编码。
+2. **真正的 Hypothesis-Evidence Memory。** Diagnosis Agent 的 memory 是一个
+   确定性的状态机（`candidate → active → supported / refuted /
+   inconclusive`），而非仅靠 prompt 的声明。统计相关性被记录为
+   *evidence*，而绝不会被记录为已确认的 causation。
+3. **Tools 连接真实内部实现。** 每个 tool 都会校验类型化参数，并针对真实的
+   database、forecast registry 或 knowledge base 运行。执行路径中
+   没有任何 `pass` 占位符。
+4. **单一的 forecast-model 边界。** Forecasting 是 *纯回归*，不包含
+   任何 anomaly 解读；anomaly detection、统计和诊断都位于 agents 之中。
 
-## Component topology
+## 组件拓扑
 
 ```mermaid
 flowchart TB
     subgraph Supervisor["Supervisor (hierarchical ReAct)"]
-        SLP["ReAct loop over delegation tools"]
+        SLP["ReAct loop（遍历 delegation tools）"]
         DTS["delegate_to_timeseries"]
         DDX["delegate_to_diagnosis"]
         DKN["delegate_to_knowledge"]
@@ -55,8 +52,8 @@ flowchart TB
     SLP --> DKN --> KN_LOOP --> KN_TOOLS
     SLP --> FIN
 
-    subgraph Infra["Shared infrastructure"]
-        STATE["Shared LangGraph state (append-only logs)"]
+    subgraph Infra["共享基础设施"]
+        STATE["共享 LangGraph state（append-only logs）"]
         REG["Forecast Model Registry"]
         KB["Knowledge Base (hybrid RAG)"]
         DB["MES/FDC database (Postgres/SQLite)"]
@@ -71,71 +68,70 @@ flowchart TB
     STATE -.checkpointed.-> INFRA
 ```
 
-## Agent responsibilities and boundaries
+## Agent 职责与边界
 
-| Agent | Owns | Explicitly does **not** own |
+| Agent | 负责 | 明确**不**负责 |
 |---|---|---|
-| **Supervisor** | Task decomposition, delegation order, final report assembly | Data analysis, diagnosis, retrieval — it only routes |
-| **Time-Series** | Numerical analysis: query, forecast, anomaly *detection*, correlation, lag, descriptive statistics, charts | Root-cause inference, causal claims |
-| **Diagnosis** | Causal reasoning: hypothesis generation, evidence collection, hypothesis re-evaluation, root-cause ranking | Raw retrieval, model training |
-| **Knowledge** | Document / similar-case retrieval with citations | Interpretation, diagnosis |
+| **Supervisor** | 任务分解、委托顺序、最终报告组装 | 数据分析、诊断、检索 —— 它只负责路由 |
+| **Time-Series** | 数值分析：query、forecast、anomaly *detection*、correlation、lag、描述性统计、图表 | 根因推断、因果性结论 |
+| **Diagnosis** | 因果推理：hypothesis 生成、证据收集、hypothesis 重新评估、根因排序 | 原始检索、模型训练 |
+| **Knowledge** | 带引用的文档 / 相似案例检索 | 解读、诊断 |
 
-This split enforces the spec's requirement that *forecasting ≠ anomaly
-analysis* and *correlation ≠ causation*: the Time-Series Agent returns
-"numbers + anomalies", and the Diagnosis Agent is the only component allowed to
-turn evidence into a supported/refuted hypothesis.
+这种划分落实了规范中 *forecasting ≠ anomaly analysis* 以及 *correlation ≠ causation* 的要求：
+Time-Series Agent 只返回「数字 + anomalies」，而 Diagnosis Agent 是唯一被允许把
+证据转化为 supported/refuted hypothesis 的组件。
 
-## Shared state
+## 共享状态
 
-The LangGraph `AgentState` is the single source of truth. Append-only log fields
-(`messages`, `tool_history`, `delegation_records`, `trace`, `errors`,
-`subtasks`, `forecast_results`, `anomaly_results`, `retrieved_docs`) use
-`operator.add` reducers so every node's delta only carries *added* items. The
-replaceable memory fields (`hypotheses`, `evidence`, `pending_checks`) are
-overwritten in full by the Diagnosis Agent.
+LangGraph 的 `AgentState` 是唯一事实来源。仅追加的日志字段
+（`messages`、`tool_history`、`delegation_records`、`trace`、`errors`、
+`subtasks`、`forecast_results`、`anomaly_results`、`retrieved_docs`）使用
+`operator.add` reducer，因此每个节点的 delta 只携带*新增*的条目。
+可替换的 memory 字段（`hypotheses`、`evidence`、`pending_checks`）由
+Diagnosis Agent 整体覆盖。
 
-A LangGraph checkpointer (`MemorySaver` or `SqliteSaver`) makes runs resumable and
-inspectable by `thread_id`.
+LangGraph checkpointer（`MemorySaver` 或 `SqliteSaver`）使运行可恢复，
+并可通过 `thread_id` 检查。
 
-## ReAct loop and audit trail
+## ReAct 循环与审计轨迹
 
-Each agent (including the Supervisor) runs a shared `run_react_loop` that:
+每个 agent（包括 Supervisor）都运行一个共享的 `run_react_loop`，它会：
 
-1. Sends the system prompt + message history to the LLM.
-2. Parses the response into structured tool calls or a stop.
-3. Executes each tool through the `ToolRegistry` (validated, exception-safe).
-4. Appends a **decision summary** (not the hidden chain-of-thought) plus the
-   tool results to the trace.
+1. 把系统 prompt + 消息历史发送给 LLM。
+2. 将响应解析为结构化的 tool 调用或停止信号。
+3. 通过 `ToolRegistry` 执行每个 tool（经过校验、异常安全）。
+4. 将**决策摘要**（而非隐藏的 chain-of-thought）以及 tool 结果
+   追加到 trace 中。
 
-Budgets (`supervisor_max_iterations`, `agent_max_iterations`, `tool_budget`) and
-a loop-detection window stop runaway loops.
+预算（`supervisor_max_iterations`、`agent_max_iterations`、`tool_budget`）以及
+一个 loop 检测窗口可以阻止失控循环。
 
-## Forecasting model registry
+## Forecasting 模型 registry
 
-A single `ForecastModel` protocol (`request → ForecastResult`) is implemented by:
+单一的 `ForecastModel` 协议（`request → ForecastResult`）由以下实现：
 
-- `StatisticalBaselineModel` — **real**: fits a linear trend on the lookback
-  window and extrapolates with a ~95% prediction interval.
-- `PatchTSTAdapter`, `iTransformerAdapter` — **interface-only skeletons** that
-  raise `ForecastModelNotAvailable` until weights are loaded.
+- `StatisticalBaselineModel` —— **真实实现**：在 lookback 窗口上拟合线性趋势，
+  并以约 95% 的预测区间进行外推。
+- `PatchTSTAdapter`、`iTransformerAdapter` —— **仅接口的骨架**，在加载权重之前会
+  抛出 `ForecastModelNotAvailable`。
 
-This is the honest boundary: the pipeline is real end-to-end, and industrial
-models plug in through the same registry without touching the agents.
+这就是诚实的边界：pipeline 是真实端到端的，工业模型通过同一个 registry
+接入，而无需改动 agents。
 
 ## RAG pipeline
 
-Hybrid retrieval (design borrowed from [ragent](https://github.com/infiniflow/ragent)'s
-dense + keyword parallel recall, RRF fusion, rerank — reimplemented in Python):
+混合检索（设计借鉴自 [ragent](https://github.com/infiniflow/ragent) 的
+dense + 关键词并行召回、RRF 融合、rerank —— 用 Python 重新实现）：
 
-1. `load_documents` chunks markdown by paragraph with overlap; the parent
-   directory is the `doc_type` (`sop` / `alarm` / `fault_cases`).
-2. `HashEmbedder` (deterministic, offline) or an OpenAI-compatible embedder
-   produces dense vectors.
-3. `HybridRetriever` fuses dense cosine similarity and BM25 via RRF, then reranks.
-4. Every hit carries a source citation (`sop/mfc_flow_drift.md`, …).
+1. `load_documents` 按段落对 markdown 进行 chunking，并带重叠；父目录即
+   `doc_type`（`sop` / `alarm` / `fault_cases`）。
+2. `HashEmbedder`（确定性的、离线）或 OpenAI 兼容的 embedder
+   生成 dense 向量。
+3. `HybridRetriever` 通过 RRF 融合 dense 余弦相似度与 BM25，然后进行 rerank。
+4. 每个命中结果都带有一个来源引用（`sop/mfc_flow_drift.md`，…）。
 
-## Persistence
+## 持久化
 
-- Business data: SQLAlchemy 2.0 over PostgreSQL (production) or SQLite (dev/test).
-- Sessions: JSON-file `SessionStore` for API history + final reports.
-- LangGraph checkpoints: `MemorySaver` / `SqliteSaver`.
+- 业务数据：基于 PostgreSQL（生产）或 SQLite（开发/测试）的 SQLAlchemy 2.0。
+- 会话：JSON 文件的 `SessionStore`，用于 API 历史记录 + 最终报告。
+- LangGraph checkpoints：`MemorySaver` / `SqliteSaver`。

@@ -1,4 +1,4 @@
-"""Knowledge tools: hybrid document retrieval and similar-case retrieval."""
+"""知识工具：混合文档检索和相似案例检索。"""
 from __future__ import annotations
 
 from pydantic import BaseModel, Field
@@ -9,10 +9,10 @@ from fabpilot.utils import ToolValidationError
 
 
 class DocumentRetrievalInput(BaseModel):
-    query: str = Field(description="Natural-language query or symptom description.")
-    k: int = Field(default=5, description="Number of top chunks to return.")
+    query: str = Field(description="自然语言查询或症状描述。")
+    k: int = Field(default=5, description="要返回的 top chunk 数量。")
     doc_type: str | None = Field(
-        default=None, description="Scope to a doc type: 'sop', 'alarm' or 'fault_cases'."
+        default=None, description="限定到某一 doc type：'sop'、'alarm' 或 'fault_cases'。"
     )
 
 
@@ -31,9 +31,8 @@ def _map(doc) -> RetrievedDoc:
 @tool(
     name="document_retrieval",
     description=(
-        "Retrieve relevant knowledge-base documents (SOPs, alarm handling guides, "
-        "fault cases) using hybrid dense+sparse retrieval with RRF fusion. Returns "
-        "ranked chunks with source citations."
+        "使用带 RRF 融合的混合 dense+sparse 检索，检索相关的知识库文档（SOP、"
+        "告警处理指南、故障案例）。返回带来源引用的排序后 chunk。"
     ),
     input_model=DocumentRetrievalInput,
     tags=["knowledge"],
@@ -48,15 +47,15 @@ def document_retrieval(
 
 
 class SimilarCaseInput(BaseModel):
-    query: str = Field(description="Symptom / channel pattern to match against historical fault cases.")
-    k: int = Field(default=5, description="Number of similar cases to return.")
+    query: str = Field(description="用于匹配历史故障案例的症状 / 通道模式。")
+    k: int = Field(default=5, description="要返回的相似案例数量。")
 
 
 @tool(
     name="similar_case_retrieval",
     description=(
-        "Retrieve historical fault cases similar to the described symptom. Used by "
-        "the Diagnosis Agent to ground hypotheses in precedent."
+        "检索与所描述症状相似的历史故障案例。由 Diagnosis Agent 使用，"
+        "用先例为 hypothesis 提供依据。"
     ),
     input_model=SimilarCaseInput,
     tags=["knowledge"],

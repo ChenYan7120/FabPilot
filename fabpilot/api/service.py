@@ -1,9 +1,8 @@
-"""Application service: real data/analytics tools + the full agent runtime.
+"""应用服务：真实的数据/分析 tool + 完整的 agent 运行时。
 
-The data and analytics endpoints do not need an LLM, so the service builds a
-``ToolContext`` backed by the real database / forecast registry / knowledge base
-directly. The task endpoints lazily build the full hierarchical runtime (LLM +
-LangGraph) on first use, so starting the API never requires an API key.
+数据与分析接口不需要 LLM，因此该服务会基于真实的数据库 / 预测注册表 /
+知识库直接构建 ``ToolContext``。任务接口在首次使用时惰性构建完整的
+层级式运行时（LLM + LangGraph），因此启动 API 时无需 API key。
 """
 from __future__ import annotations
 
@@ -21,7 +20,7 @@ from fabpilot.tools.registry import ToolContext
 
 
 class FabPilotServiceError(Exception):
-    """Raised when a service operation fails (mapped to an HTTP error by routes)."""
+    """当某项 service 操作失败时抛出（由路由映射为 HTTP 错误）。"""
 
 
 class FabPilotService:
@@ -43,7 +42,7 @@ class FabPilotService:
         self._store = build_session_store(self.settings)
         self._runtime: Runtime | None = None
 
-    # ---- tool dispatch ---------------------------------------------------- #
+    # ---- tool 分发 ---------------------------------------------------- #
 
     def _call(self, name: str, **kwargs: Any) -> dict[str, Any]:
         result = self.tool_registry.invoke(self._ctx, kwargs)
@@ -51,7 +50,7 @@ class FabPilotService:
             raise FabPilotServiceError(result.error or f"tool '{name}' failed")
         return result.data
 
-    # ---- MES/FDC data ----------------------------------------------------- #
+    # ---- MES/FDC 数据 ----------------------------------------------------- #
 
     def list_equipment(self) -> list[dict[str, Any]]:
         return self._call("equipment_status").get("equipment", [])
@@ -97,7 +96,7 @@ class FabPilotService:
     def fault_cases(self, equipment_id: str | None = None, limit: int = 50) -> dict[str, Any]:
         return self._call("fault_case", equipment_id=equipment_id, limit=limit)
 
-    # ---- analytics -------------------------------------------------------- #
+    # ---- 分析 -------------------------------------------------------- #
 
     def forecast(
         self,
@@ -136,7 +135,7 @@ class FabPilotService:
     def search_knowledge(self, query: str, k: int = 5, doc_type: str | None = None) -> dict[str, Any]:
         return self._call("document_retrieval", query=query, k=k, doc_type=doc_type)
 
-    # ---- agent tasks ------------------------------------------------------ #
+    # ---- agent 任务 ------------------------------------------------------ #
 
     @property
     def runtime(self) -> Runtime:

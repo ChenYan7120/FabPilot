@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run a single task through the agent system from the command line."""
+"""从命令行通过 agent 系统运行单个任务。"""
 import sys
 
 from fabpilot.main import main

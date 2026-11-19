@@ -1,9 +1,9 @@
-"""FabPilot Streamlit UI.
+"""FabPilot Streamlit UI。
 
-Run with ``fabpilot ui`` (see ``fabpilot.main``) or ``streamlit run fabpilot/ui/app.py``.
+通过 ``fabpilot ui``（见 ``fabpilot.main``）或 ``streamlit run fabpilot/ui/app.py`` 启动。
 
-The UI talks to the *service* directly (same process) rather than the HTTP API,
-so it works even with a ``fake`` LLM and an in-memory database.
+UI 直接与 *service*（同一进程）通信，而非通过 HTTP API，
+因此即使使用 ``fake`` LLM 和内存数据库也能正常工作。
 """
 from __future__ import annotations
 
@@ -31,7 +31,7 @@ tab_data, tab_forecast, tab_anomaly, tab_knowledge, tab_task = st.tabs(
     ["Equipment / FDC", "Forecast", "Anomaly Detection", "Knowledge Base", "Agent Task"]
 )
 
-# ---- Equipment / FDC ------------------------------------------------------- #
+# ---- 设备 / FDC ------------------------------------------------------- #
 with tab_data:
     st.header("Equipment")
     try:
@@ -67,7 +67,7 @@ with tab_data:
     else:
         st.info("No equipment found. Run the seed script first (`fabpilot seed`).")
 
-# ---- Forecast -------------------------------------------------------------- #
+# ---- 预测 -------------------------------------------------------------- #
 with tab_forecast:
     st.header("Forecast")
     col1, col2, col3 = st.columns(3)
@@ -91,7 +91,7 @@ with tab_forecast:
                 st.line_chart({target: [p.get("value") for p in forecast]})
             st.json(result)
 
-# ---- Anomaly Detection ----------------------------------------------------- #
+# ---- 异常检测 ----------------------------------------------------- #
 with tab_anomaly:
     st.header("Anomaly Detection")
     col1, col2, col3, col4 = st.columns(4)
@@ -113,7 +113,7 @@ with tab_anomaly:
             st.metric("Anomalies", len(anomalies))
             st.json(result)
 
-# ---- Knowledge Base -------------------------------------------------------- #
+# ---- 知识库 -------------------------------------------------------- #
 with tab_knowledge:
     st.header("Knowledge Base")
     query = st.text_input("Query", value="gas flow drift")
@@ -129,7 +129,7 @@ with tab_knowledge:
                 with st.expander(f"{d.get('source', d.get('title', ''))}  (score {d.get('score', 0):.3f})"):
                     st.markdown(d.get("text", ""))
 
-# ---- Agent Task ------------------------------------------------------------ #
+# ---- Agent 任务 ------------------------------------------------------------ #
 with tab_task:
     st.header("Run agent task")
     st.caption("Routes to the supervisor + specialised agents via the hypothesis-evidence loop.")

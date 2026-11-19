@@ -1,9 +1,8 @@
-"""LangGraph assembly: three specialist subgraphs + a supervisor top graph.
+"""LangGraph 装配：三个专职子图 + 一个 Supervisor 顶层图。
 
-The Supervisor node runs its own ReAct loop over delegation tools; each
-delegation tool invokes the corresponding specialist subgraph synchronously and
-returns the specialist's summary. State is accumulated with the same append-only
-reducers so the final state carries the full audit trail.
+Supervisor 节点在委托工具之上运行自己的 ReAct 循环；每个委托工具同步调用
+对应的专职子图，并返回该专家的总结。状态通过相同的只追加 reducer 累积，
+因此最终状态携带完整的审计轨迹。
 """
 from __future__ import annotations
 
@@ -37,7 +36,7 @@ def build_subgraphs(llm, tool_registry, ctx) -> dict[str, Any]:
 
 
 def build_graph(llm, tool_registry, ctx, settings, checkpointer=None):
-    """Return the compiled top-level FabPilot graph."""
+    """返回编译后的 FabPilot 顶层图。"""
     subgraphs = build_subgraphs(llm, tool_registry, ctx)
     supervisor_node = build_supervisor_node(llm, subgraphs, ctx, settings)
 

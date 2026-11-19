@@ -1,4 +1,4 @@
-"""General tools: restricted Python analysis, chart and report generation."""
+"""通用工具：受限的 Python 分析、图表和报告生成。"""
 from __future__ import annotations
 
 import ast
@@ -19,7 +19,7 @@ from fabpilot.tools.schemas import AnalysisResult, ChartResult
 from fabpilot.utils import ToolValidationError
 
 # --------------------------------------------------------------------------- #
-# Restricted Python analysis
+# 受限的 Python 分析
 # --------------------------------------------------------------------------- #
 
 _ALLOWED = {"numpy": np, "np": np, "pandas": pd, "pd": pd, "math": math, "statistics": statistics}
@@ -28,9 +28,9 @@ _FORBIDDEN = ("__", "import", "open", "eval", "exec", "compile", "globals", "loc
 
 
 class PythonAnalysisInput(BaseModel):
-    code: str = Field(description="A single Python expression, e.g. 'np.mean(v)'.")
+    code: str = Field(description="单个 Python 表达式，如 'np.mean(v)'。")
     variables: dict[str, Any] = Field(
-        default_factory=dict, description="Named variables available to the expression."
+        default_factory=dict, description="可供表达式使用的命名变量。"
     )
 
 
@@ -52,8 +52,8 @@ def _assert_safe(code: str) -> None:
 @tool(
     name="python_analysis",
     description=(
-        "Evaluate a restricted single-expression Python calculation (numpy/pandas/math "
-        "available). No imports, I/O or attribute access to private members."
+        "执行受限的单表达式 Python 计算（可用 numpy/pandas/math）。"
+        "不允许 import、I/O 或访问私有成员的属性。"
     ),
     input_model=PythonAnalysisInput,
     tags=["general"],
@@ -62,7 +62,7 @@ def python_analysis(ctx: ToolContext, code: str, variables: dict[str, Any] | Non
     _assert_safe(code)
     namespace = dict(_ALLOWED)
     namespace.update(variables or {})
-    result = eval(code, {"__builtins__": {}}, namespace)  # noqa: S307 — restricted namespace
+    result = eval(code, {"__builtins__": {}}, namespace)  # noqa: S307 —— 受限命名空间
     if isinstance(result, (np.ndarray, pd.Series)):
         result = result.tolist()
     try:
@@ -73,7 +73,7 @@ def python_analysis(ctx: ToolContext, code: str, variables: dict[str, Any] | Non
 
 
 # --------------------------------------------------------------------------- #
-# Chart generation
+# 图表生成
 # --------------------------------------------------------------------------- #
 
 
@@ -84,10 +84,10 @@ class ChartSeries(BaseModel):
 
 
 class ChartInput(BaseModel):
-    kind: str = Field(default="line", description="'line', 'scatter' or 'hist'.")
-    title: str = Field(description="Chart title.")
-    series: list[ChartSeries] = Field(description="One or more series to plot.")
-    filename: str | None = Field(default=None, description="Output filename (auto-generated if omitted).")
+    kind: str = Field(default="line", description="'line'、'scatter' 或 'hist'。")
+    title: str = Field(description="图表标题。")
+    series: list[ChartSeries] = Field(description="要绘制的一个或多个 series。")
+    filename: str | None = Field(default=None, description="输出文件名（省略时自动生成）。")
 
 
 def _safe_slug(name: str) -> str:
@@ -97,7 +97,7 @@ def _safe_slug(name: str) -> str:
 
 @tool(
     name="chart",
-    description="Render a line / scatter / histogram chart and save it as a PNG file.",
+    description="绘制 line / scatter / histogram 图表并保存为 PNG 文件。",
     input_model=ChartInput,
     tags=["general"],
 )
@@ -138,19 +138,19 @@ def chart(
 
 
 # --------------------------------------------------------------------------- #
-# Report generation
+# 报告生成
 # --------------------------------------------------------------------------- #
 
 
 class ReportInput(BaseModel):
-    title: str = Field(description="Report title.")
-    content: str = Field(description="Markdown body of the report.")
-    filename: str | None = Field(default=None, description="Output filename (auto-generated if omitted).")
+    title: str = Field(description="报告标题。")
+    content: str = Field(description="报告的 Markdown 正文。")
+    filename: str | None = Field(default=None, description="输出文件名（省略时自动生成）。")
 
 
 @tool(
     name="report",
-    description="Write a Markdown report to the reports directory and return its path.",
+    description="将 Markdown 报告写入 reports 目录并返回其路径。",
     input_model=ReportInput,
     tags=["general"],
 )

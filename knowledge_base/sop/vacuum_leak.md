@@ -1,33 +1,28 @@
-# Vacuum Leak Detection — Troubleshooting SOP
+# Vacuum Leak 检测 —— 排障 SOP
 
-## Applicability
-Etch chambers where base/vacuum pressure fails to reach or hold the target.
+## 适用范围
+基准/真空压力无法达到或保持目标值的 etch 腔室。
 
-## Background
-A vacuum leak (seal failure, cracked O-ring, valve seat damage, or a leak in
-the gas delivery line) prevents the chamber from reaching its base pressure.
-The signature is an elevated `vacuum_pressure` that rises toward atmosphere
-when pumping is throttled.
+## 背景
+真空泄漏（密封失效、O 型圈开裂、阀座损坏或气体输送管路泄漏）会阻止腔室
+达到其基准压力。其特征是 `vacuum_pressure` 升高，当抽气被节流时向大气方向上升。
 
-## Observable signatures
-- `vacuum_pressure` elevated above its normal base value.
-- Pressure rises faster than normal during idle / throttled pumping (leak-up).
-- Other channels (`gas_flow`, `rf_power`) remain nominal until the process is
-  affected.
+## 可观察特征
+- `vacuum_pressure` 升高到其正常基准值以上。
+- 在闲置/节流抽气（leak-up）期间压力上升速度快于正常。
+- 其他 channel（`gas_flow`、`rf_power`）保持标称值，直到工艺受到影响。
 
-## Diagnostic procedure
-1. Record base `vacuum_pressure` after a pump-down and compare to history.
-2. Perform a rate-of-rise (leak-up) test: isolate the chamber and measure how
-   fast pressure climbs.
-3. Compare leak-up rate against the specification for the chamber volume.
-4. Isolate the leak location (O-rings, valves, gas lines) with a helium sniffer.
+## 诊断步骤
+1. 在抽空后记录基准 `vacuum_pressure`，并与历史值进行比较。
+2. 执行升压速率（leak-up）测试：隔离腔室并测量压力上升的速度。
+3. 将 leak-up 速率与腔体容积的规格进行对比。
+4. 用氦气检漏定位泄漏点（O 型圈、阀门、气体管路）。
 
-## Recommended actions
-- Replace suspect O-rings / seals.
-- Verify valve seat integrity.
-- Helium leak-check the gas delivery lines.
+## 建议措施
+- 更换可疑的 O 型圈 / 密封件。
+- 检查阀座完整性。
+- 对气体输送管路做氦气检漏。
 
-## Correlation vs causation note
-Elevated `vacuum_pressure` is a *symptom*; the *cause* (leak vs. pump
-degradation vs. outgassing) must be isolated with a leak-up test before
-assigning a root cause.
+## 关于 correlation 与 causation 的说明
+`vacuum_pressure` 升高只是*症状*；在判定根因之前，必须用 leak-up 测试
+把*原因*（泄漏 vs. 泵退化 vs. 放气）区分开来。

@@ -1,5 +1,5 @@
-"""Time-Series Agent: numerical analysis (query, forecast, anomaly, correlation,
-lag, statistics, charts). It produces numbers and anomaly flags, never root causes.
+"""时序 Agent：数值分析（查询、预测、异常、相关性、滞后、统计、图表）。
+它产出的是数值与异常标记，而不是根因。
 """
 from __future__ import annotations
 

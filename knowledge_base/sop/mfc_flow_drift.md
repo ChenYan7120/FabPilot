@@ -1,35 +1,31 @@
-# MFC Gas Flow Drift — Troubleshooting SOP
+# MFC Gas Flow Drift —— 排障 SOP
 
-## Applicability
-Etch process chambers where mass flow controller (MFC) gas flow drifts over time.
+## 适用范围
+气体流量随时间漂移的 etch 工艺腔室（mass flow controller，MFC）。
 
-## Background
-An MFC regulates gas flow to a setpoint. Mechanical wear, contamination of the
-laminar flow element, or thermal drift of the control electronics causes the
-actual delivered flow to deviate from the commanded setpoint. A slow, monotonic
-drift (rather than a step change) is the classic signature of MFC ageing.
+## 背景
+MFC 将气体流量调节到设定值。机械磨损、层流元件污染或控制电子元件的热漂移
+会导致实际输送流量偏离指令设定值。缓慢、单调的漂移（而非阶跃变化）是
+MFC 老化的典型特征。
 
-## Observable signatures
-- `gas_flow` slowly drifts away from its setpoint over hours/days.
-- `pressure` tracks the flow drift (flow and pressure are coupled through the
-  throttle valve), but lags behind.
-- No corresponding alarm, and `rf_power` / `bias_voltage` remain stable.
-- Process metrics (etch rate, uniformity) degrade gradually.
+## 可观察特征
+- `gas_flow` 在数小时/数天内缓慢偏离其设定值。
+- `pressure` 跟随流量漂移（流量与压力通过节流阀耦合），但滞后于流量。
+- 没有相应的报警，且 `rf_power` / `bias_voltage` 保持稳定。
+- 工艺指标（刻蚀速率、均匀性）逐渐退化。
 
-## Diagnostic procedure
-1. Confirm the drift is monotonic, not oscillatory — plot `gas_flow` vs time.
-2. Cross-check `pressure`: a *leading* flow change with a *lagging* pressure
-   change points to the MFC, not the throttle valve or pump.
-3. Inspect the MFC zero/span calibration record (maintenance history).
-4. If the drift is step-like, suspect a setpoint command fault or a valve
-   sticking, not ageing.
+## 诊断步骤
+1. 确认漂移是单调的而非振荡的 —— 绘制 `gas_flow` 随时间变化的曲线。
+2. 交叉检查 `pressure`：*领先*的流量变化伴随*滞后*的压力变化
+   指向 MFC，而非节流阀或泵。
+3. 检查 MFC 的零/满量程校准记录（维护历史）。
+4. 如果漂移呈阶跃状，应怀疑设定值指令故障或阀门卡滞，而非老化。
 
-## Recommended actions
-- Perform MFC zero/span calibration.
-- Replace the MFC if calibration cannot restore setpoint tracking.
-- Verify the upstream pressure regulator and gas filter.
+## 建议措施
+- 执行 MFC 零/满量程校准。
+- 如果校准无法恢复设定值跟踪，则更换 MFC。
+- 检查上游压力调节器和气体过滤器。
 
-## Correlation vs causation note
-Flow and pressure are *correlated* by physics, but a pressure anomaly does not
-*prove* an MFC fault. Only the lead/lag ordering and calibration history
-establish causation.
+## 关于 correlation 与 causation 的说明
+流量和压力在物理上是*相关的*，但压力异常并不能*证明* MFC 故障。
+只有领先/滞后顺序和校准历史才能确立 causation。

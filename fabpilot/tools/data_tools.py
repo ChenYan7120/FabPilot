@@ -1,4 +1,4 @@
-"""Data-access tools: read-only views over the MES / FDC business database."""
+"""数据访问工具：对 MES / FDC 业务数据库的只读视图。"""
 from __future__ import annotations
 
 from datetime import datetime
@@ -19,7 +19,7 @@ from fabpilot.tools.schemas import (
 from fabpilot.utils import ToolValidationError
 
 # --------------------------------------------------------------------------- #
-# SQL query (read-only)
+# SQL 查询（只读）
 # --------------------------------------------------------------------------- #
 
 _FORBIDDEN = ("insert", "update", "delete", "drop", "create", "alter", "truncate",
@@ -27,8 +27,8 @@ _FORBIDDEN = ("insert", "update", "delete", "drop", "create", "alter", "truncate
 
 
 class SqlQueryInput(BaseModel):
-    query: str = Field(description="Read-only SQL SELECT statement over the fabpilot schema.")
-    limit: int = Field(default=200, description="Maximum number of rows to return.")
+    query: str = Field(description="对 fabpilot schema 的只读 SQL SELECT 语句。")
+    limit: int = Field(default=200, description="最多返回的行数。")
 
 
 def _assert_read_only(query: str) -> None:
@@ -38,7 +38,7 @@ def _assert_read_only(query: str) -> None:
         raise ToolValidationError("only read-only SELECT / WITH / SHOW statements are allowed")
     for word in _FORBIDDEN:
         if word in stripped:
-            # allow 'select' containing 'create' etc. only when word is not the statement
+            # 仅当单词不是语句本身时，才允许 'select' 中包含 'create' 等字样
             raise ToolValidationError(f"statement contains forbidden keyword '{word}'")
     if ";" in query:
         remainder = query.split(";", 1)[1].strip()
@@ -49,10 +49,10 @@ def _assert_read_only(query: str) -> None:
 @tool(
     name="sql_query",
     description=(
-        "Run a read-only SQL SELECT query against the fabpilot MES/FDC database. "
-        "Tables include: equipment, sensor_readings, equipment_alarms, "
-        "maintenance_records, fault_cases, process_configurations, anomaly_labels. "
-        "Use for arbitrary aggregates / joins that no dedicated tool covers."
+        "对 fabpilot MES/FDC 数据库执行只读的 SQL SELECT 查询。"
+        "表包括：equipment、sensor_readings、equipment_alarms、"
+        "maintenance_records、fault_cases、process_configurations、anomaly_labels。"
+        "用于没有专用工具覆盖的任意聚合 / 连接查询。"
     ),
     input_model=SqlQueryInput,
     tags=["data", "sql"],
@@ -68,13 +68,13 @@ def sql_query(ctx: ToolContext, query: str, limit: int = 200) -> dict:
 
 
 # --------------------------------------------------------------------------- #
-# Equipment status
+# 设备状态
 # --------------------------------------------------------------------------- #
 
 
 class EquipmentInput(BaseModel):
     equipment_id: str | None = Field(
-        default=None, description="Equipment code (e.g. 'ETCH-01'). Omit to list all."
+        default=None, description="设备编码（如 'ETCH-01'）。省略则列出全部。"
     )
 
 
@@ -87,7 +87,7 @@ def _equipment_to_dict(eq) -> EquipmentInfo:
 
 @tool(
     name="equipment_status",
-    description="Return the status / metadata of one equipment or list all equipment.",
+    description="返回某台设备的状态 / 元数据，或列出全部设备。",
     input_model=EquipmentInput,
     tags=["data"],
 )
@@ -102,27 +102,27 @@ def equipment_status(ctx: ToolContext, equipment_id: str | None = None):
 
 
 # --------------------------------------------------------------------------- #
-# Sensor data
+# 传感器数据
 # --------------------------------------------------------------------------- #
 
 
 class SensorDataInput(BaseModel):
-    equipment_id: str = Field(description="Equipment code, e.g. 'ETCH-01'.")
+    equipment_id: str = Field(description="设备编码，如 'ETCH-01'。")
     channel: str | None = Field(
-        default=None, description="Single channel to select; omit for all channels."
+        default=None, description="要选择的单个通道；省略则选择全部通道。"
     )
-    start: datetime | None = Field(default=None, description="Inclusive start timestamp (ISO-8601).")
-    end: datetime | None = Field(default=None, description="Inclusive end timestamp (ISO-8601).")
-    limit: int = Field(default=500, description="Maximum number of raw points to return.")
-    summarize: bool = Field(default=False, description="Return per-channel summary statistics instead of raw rows.")
+    start: datetime | None = Field(default=None, description="起始时间戳（含该时刻，ISO-8601）。")
+    end: datetime | None = Field(default=None, description="结束时间戳（含该时刻，ISO-8601）。")
+    limit: int = Field(default=500, description="最多返回的原始数据点数。")
+    summarize: bool = Field(default=False, description="返回各通道的汇总统计，而不是原始数据行。")
 
 
 @tool(
     name="sensor_data",
     description=(
-        "Query historical sensor readings (pressure, temperature, gas_flow, rf_power, "
-        "vacuum_pressure, bias_voltage, helium_flow) for an equipment. Returns raw rows "
-        "and/or per-channel summary statistics."
+        "查询某台设备的历史 sensor 读数（pressure、temperature、gas_flow、rf_power、"
+        "vacuum_pressure、bias_voltage、helium_flow）。返回原始数据行"
+        "和 / 或各通道的汇总统计。"
     ),
     input_model=SensorDataInput,
     tags=["data"],
@@ -174,15 +174,15 @@ def sensor_data(
 
 
 # --------------------------------------------------------------------------- #
-# Alarm log
+# 告警日志
 # --------------------------------------------------------------------------- #
 
 
 class AlarmInput(BaseModel):
-    equipment_id: str = Field(description="Equipment code, e.g. 'ETCH-01'.")
+    equipment_id: str = Field(description="设备编码，如 'ETCH-01'。")
     start: datetime | None = None
     end: datetime | None = None
-    limit: int = Field(default=100, description="Maximum number of alarms to return.")
+    limit: int = Field(default=100, description="最多返回的告警数量。")
 
 
 def _alarm_dict(a) -> dict:
@@ -197,7 +197,7 @@ def _alarm_dict(a) -> dict:
 
 @tool(
     name="alarm_log",
-    description="Query the equipment alarm log (code, severity, description, timestamp).",
+    description="查询设备告警日志（含 code、severity、description、timestamp 字段）。",
     input_model=AlarmInput,
     tags=["data"],
 )
@@ -216,15 +216,15 @@ def alarm_log(
 
 
 # --------------------------------------------------------------------------- #
-# Maintenance record
+# 维护记录
 # --------------------------------------------------------------------------- #
 
 
 class MaintenanceInput(BaseModel):
-    equipment_id: str = Field(description="Equipment code, e.g. 'ETCH-01'.")
+    equipment_id: str = Field(description="设备编码，如 'ETCH-01'。")
     start: datetime | None = None
     end: datetime | None = None
-    limit: int = Field(default=100, description="Maximum number of records to return.")
+    limit: int = Field(default=100, description="最多返回的记录数。")
 
 
 def _maint_dict(m) -> dict:
@@ -239,7 +239,7 @@ def _maint_dict(m) -> dict:
 
 @tool(
     name="maintenance_record",
-    description="Query maintenance records (preventive / corrective) for an equipment.",
+    description="查询某台设备的维护记录（预防性 / 纠正性）。",
     input_model=MaintenanceInput,
     tags=["data"],
 )
@@ -258,13 +258,13 @@ def maintenance_record(
 
 
 # --------------------------------------------------------------------------- #
-# Fault case
+# 故障案例
 # --------------------------------------------------------------------------- #
 
 
 class FaultCaseInput(BaseModel):
-    equipment_id: str | None = Field(default=None, description="Filter by equipment; omit for all.")
-    limit: int = Field(default=50, description="Maximum number of cases to return.")
+    equipment_id: str | None = Field(default=None, description="按设备过滤；省略则返回全部。")
+    limit: int = Field(default=50, description="最多返回的案例数量。")
 
 
 def _fault_dict(f) -> dict:
@@ -282,7 +282,7 @@ def _fault_dict(f) -> dict:
 
 @tool(
     name="fault_case",
-    description="Query historical fault cases with known root causes and resolutions.",
+    description="查询带有已知根因与解决方案的历史故障案例。",
     input_model=FaultCaseInput,
     tags=["data"],
 )

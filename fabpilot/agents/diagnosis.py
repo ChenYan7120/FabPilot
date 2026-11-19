@@ -1,5 +1,5 @@
-"""Diagnosis Agent: hypothesis-driven root-cause analysis backed by the
-Hypothesis-Evidence Memory (real deterministic state machine, driven via tools).
+"""诊断 Agent：假设驱动的根因分析，由 Hypothesis-Evidence Memory
+（真实、确定性的状态机，通过工具驱动）支撑。
 """
 from __future__ import annotations
 

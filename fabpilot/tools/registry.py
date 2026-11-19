@@ -1,7 +1,7 @@
-"""Tool Registry: the single place tools are defined, validated and executed.
+"""工具注册表：工具的定义、校验与执行的唯一入口。
 
-Every tool exposes structured Pydantic input, validates its arguments, runs
-against a real implementation and returns a structured ``ToolResult`` envelope.
+每个工具暴露结构化的 Pydantic 输入，校验其参数，运行真实的
+实现，并返回结构化的 ``ToolResult`` 封装。
 """
 from __future__ import annotations
 
@@ -17,12 +17,12 @@ logger = get_logger(__name__)
 
 @dataclass
 class ToolContext:
-    """Shared services injected into every tool call."""
+    """注入到每个工具调用中的共享服务。"""
 
-    session_scope: Callable | None = None  # context-manager yielding a DB Session
+    session_scope: Callable | None = None  # 生成 DB Session 的上下文管理器
     forecast_registry: Any = None
     knowledge_base: Any = None
-    memory: Any = None  # HypothesisEvidenceMemory (used by the Diagnosis Agent)
+    memory: Any = None  # HypothesisEvidenceMemory（Diagnosis Agent 使用）
     settings: Any = None
     chart_dir: str = "charts"
     report_dir: str = "reports"
@@ -81,7 +81,7 @@ class Tool:
             output = self.func(ctx, **validated.model_dump())
         except ToolValidationError as exc:
             return ToolResult(ok=False, tool=self.name, error=str(exc))
-        except Exception as exc:  # defensive: a tool must never crash the agent loop
+        except Exception as exc:  # 防御性处理：工具绝不能使 agent 循环崩溃
             logger.exception("tool %s failed", self.name)
             return ToolResult(ok=False, tool=self.name, error=f"{type(exc).__name__}: {exc}")
 
@@ -121,7 +121,7 @@ class ToolRegistry:
 
 
 def tool(name: str, description: str, input_model: type[BaseModel], tags: list[str] | None = None):
-    """Decorator that registers a plain function as a ``Tool``."""
+    """将普通函数注册为 ``Tool`` 的装饰器。"""
 
     def decorator(func: Callable[..., Any]) -> Tool:
         return Tool(name=name, description=description, input_model=input_model, func=func, tags=tags)

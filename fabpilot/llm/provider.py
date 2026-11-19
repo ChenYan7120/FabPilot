@@ -1,9 +1,8 @@
-"""Unified LLM provider.
+"""统一的 LLM provider。
 
-A single entry point (`build_llm`) returns an `LLMClient` based on
-``settings.llm_provider``. Real mode talks to any OpenAI-compatible endpoint
-(DeepSeek, Qwen/DashScope, etc.); offline mode uses a deterministic FakeLLM
-that must never be presented as autonomous reasoning.
+单一入口（`build_llm`）根据 ``settings.llm_provider`` 返回一个 `LLMClient`。真实模式会
+连接任意 OpenAI 兼容端点（DeepSeek、Qwen/DashScope 等）；离线模式使用确定性的
+FakeLLM，绝不能把它当作自主推理来呈现。
 """
 from __future__ import annotations
 
@@ -18,7 +17,7 @@ from fabpilot.utils import ConfigurationError, get_logger
 
 logger = get_logger(__name__)
 
-# A JSON Schema describing the function-calling tools available to the model.
+# 描述模型可用的 function-calling tools 的 JSON Schema。
 ToolSchema = dict[str, Any]
 
 
@@ -29,7 +28,7 @@ class LLMClient(Protocol):
 
 
 class OpenAICompatibleLLM:
-    """Thin client for OpenAI-compatible ``/chat/completions`` endpoints."""
+    """用于 OpenAI 兼容 ``/chat/completions`` 端点的轻量 client。"""
 
     def __init__(
         self,
@@ -71,7 +70,7 @@ class OpenAICompatibleLLM:
                 timeout=self.timeout,
             )
             resp.raise_for_status()
-        except httpx.HTTPError as exc:  # network / HTTP errors surface to the agent loop
+        except httpx.HTTPError as exc:  # 网络 / HTTP 错误会向上抛给 agent 循环
             raise RuntimeError(f"LLM request failed: {exc}") from exc
 
         data = resp.json()

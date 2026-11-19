@@ -1,9 +1,6 @@
-"""Deterministic, dependency-light forecasting baseline.
+"""确定性的、依赖轻量的预测 baseline。
 
-This is a *real* model (not a placeholder): it fits a simple trend on the lookback
-window and extrapolates, so the whole agent pipeline, evaluation metrics and demo
-scenarios produce genuine numbers end-to-end without PyTorch. Real industrial
-models (PatchTST, iTransformer, ...) replace it through the same registry.
+这是一个 *真实* 模型（不是占位符）：它在 lookback 窗口上拟合简单趋势并外推，因此整个 agent pipeline、评估指标和 demo 场景无需 PyTorch 即可端到端产出真实数值。真实工业模型（PatchTST、iTransformer 等）通过同一 registry 替换它。
 """
 from __future__ import annotations
 
@@ -41,7 +38,7 @@ class StatisticalBaselineModel:
 
         residuals = y - fit
         sigma = float(residuals.std()) if residuals.size > 1 else 0.0
-        z = 1.96  # ~95% interval under a normality assumption
+        z = 1.96  # 正态性假设下的约 95% 区间
         lower = (future - z * sigma).tolist()
         upper = (future + z * sigma).tolist()
 
@@ -78,4 +75,4 @@ def _infer_interval(timestamps: list) -> int:
         delta = (timestamps[-1] - timestamps[-2]).total_seconds()
         if delta > 0:
             return int(delta)
-    return 300  # default 5 minutes
+    return 300  # 默认 5 分钟

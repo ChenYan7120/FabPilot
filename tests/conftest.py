@@ -1,8 +1,7 @@
-"""Shared pytest fixtures.
+"""共享的 pytest fixture。
 
-Tests that need a database use a temporary SQLite file and the ``hash`` embedder
-/ in-memory vector store so no external service (Postgres, LLM, embeddings API)
-is required.
+需要数据库的测试使用临时 SQLite 文件和 ``hash`` embedder /
+内存向量存储，因此无需任何外部服务（Postgres、LLM、embeddings API）。
 """
 from __future__ import annotations
 

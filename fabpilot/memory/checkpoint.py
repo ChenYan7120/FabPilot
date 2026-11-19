@@ -1,10 +1,9 @@
-"""Checkpointing and persistent session store.
+"""checkpoint 与持久化 session 存储。
 
-Two distinct concerns:
-  * LangGraph checkpointer — saves the *graph execution* state so a run can be
-    resumed / inspected by ``thread_id``.
-  * SessionStore — persists session summaries + final reports for the API's
-    "list history / fetch report" endpoints.
+两个独立的关注点：
+  * LangGraph checkpointer —— 保存 *图执行* 状态，使一次运行可通过 ``thread_id``
+    恢复 / 检查。
+  * SessionStore —— 为 API 的"历史列表 / 获取报告"端点持久化 session 摘要和最终报告。
 """
 from __future__ import annotations
 
@@ -19,7 +18,7 @@ logger = get_logger(__name__)
 
 
 def build_checkpointer(settings: Settings | None = None):
-    """Return a LangGraph checkpointer (in-memory by default, SQLite optional)."""
+    """返回一个 LangGraph checkpointer（默认内存模式，可选 SQLite）。"""
     from langgraph.checkpoint.memory import MemorySaver
 
     settings = settings or get_settings()
@@ -31,7 +30,7 @@ def build_checkpointer(settings: Settings | None = None):
 
 
 class SessionStore:
-    """JSON-file-backed session store used by the API layer."""
+    """基于 JSON 文件的 session 存储，供 API 层使用。"""
 
     def __init__(self, path: Path) -> None:
         self.path = path

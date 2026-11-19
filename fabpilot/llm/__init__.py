@@ -1,4 +1,4 @@
-"""LLM abstraction: message schemas, OpenAI-compatible provider and deterministic FakeLLM."""
+"""LLM 抽象：消息 schema、OpenAI 兼容 provider 以及确定性的 FakeLLM。"""
 from __future__ import annotations
 
 from fabpilot.llm.fake import FakeLLM

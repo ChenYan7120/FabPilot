@@ -1,9 +1,8 @@
-"""Shared LangGraph state.
+"""共享的 LangGraph state。
 
-The shared state is the single source of truth passed between the Supervisor and
-the specialised agents. Append-only log fields use ``operator.add`` reducers;
-replaceable fields (hypotheses / evidence / pending checks) are overwritten in
-full by whichever agent last updated them.
+共享 state 是 Supervisor 与各专职 agent 之间传递的唯一事实来源。追加式日志字段使用
+``operator.add`` 作为 reducer；可替换字段（hypotheses / evidence / pending checks）会
+被最后一次更新它们的 agent 整体覆盖。
 """
 from __future__ import annotations
 
@@ -12,41 +11,41 @@ from typing import Annotated, Any, TypedDict
 
 
 class AgentState(TypedDict, total=False):
-    # session identity
+    # 会话标识
     session_id: str
     thread_id: str
 
-    # task
+    # 任务
     user_task: str
     status: str  # pending | running | completed | failed
     current_agent: str
 
-    # append-only logs
+    # 追加式日志
     messages: Annotated[list[dict[str, Any]], operator.add]
     tool_history: Annotated[list[dict[str, Any]], operator.add]
     delegation_records: Annotated[list[dict[str, Any]], operator.add]
     trace: Annotated[list[dict[str, Any]], operator.add]
     errors: Annotated[list[dict[str, Any]], operator.add]
 
-    # additive results
+    # 累加式结果
     subtasks: Annotated[list[dict[str, Any]], operator.add]
     forecast_results: Annotated[list[dict[str, Any]], operator.add]
     anomaly_results: Annotated[list[dict[str, Any]], operator.add]
     retrieved_docs: Annotated[list[dict[str, Any]], operator.add]
 
-    # replaceable memory (Hypothesis-Evidence)
+    # 可替换 memory（Hypothesis-Evidence）
     hypotheses: list[dict[str, Any]]
     evidence: list[dict[str, Any]]
     pending_checks: list[dict[str, Any]]
 
-    # final output
+    # 最终输出
     final_report: str
 
-    # budgets / bookkeeping
+    # 预算 / 记账
     step_counts: dict[str, int]
 
 
-# Fields that accumulate with operator.add (append-only).
+# 通过 operator.add 累加的字段（追加式）。
 LIST_FIELDS: frozenset[str] = frozenset(
     {
         "messages",
@@ -87,11 +86,10 @@ def initial_state(session_id: str, thread_id: str, user_task: str) -> AgentState
 
 
 def diff_state(before: AgentState, after: AgentState) -> AgentState:
-    """Return the partial delta that turns ``before`` into ``after``.
+    """返回将 ``before`` 变为 ``after`` 的局部差异。
 
-    Append-only fields become the *added* items only (so a LangGraph node can
-    return this delta without double-appending); replaceable fields are returned
-    when they changed.
+    追加式字段只包含 *新增* 的条目（这样 LangGraph 节点返回该差异时不会重复追加）；
+    可替换字段仅在其发生变化时返回。
     """
     delta: AgentState = {}
     for key in after:

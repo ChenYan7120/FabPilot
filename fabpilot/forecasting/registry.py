@@ -1,8 +1,6 @@
-"""Unified Forecasting Model Registry.
+"""统一的 Forecasting Model Registry。
 
-PatchTST, iTransformer or any custom model plug in through a single
-``ForecastModel`` interface so the Time-Series Agent never depends on a concrete
-implementation.
+PatchTST、iTransformer 或任意自定义模型都通过统一的 ``ForecastModel`` 接口接入，因此 Time-Series Agent 从不依赖具体实现。
 """
 from __future__ import annotations
 
@@ -38,8 +36,7 @@ class ForecastModelRegistry:
 
 
 def build_forecast_registry(settings: Settings | None = None) -> ForecastModelRegistry:
-    """Registry with the deterministic statistical baseline and the adapter
-    skeletons registered (adapters only run once weights are loaded)."""
+    """包含已注册的确定性统计 baseline 与 adapter 骨架的 registry（adapter 仅在权重加载后才能运行）。"""
     settings = settings or get_settings()
     registry = ForecastModelRegistry()
     registry.register(StatisticalBaselineModel())

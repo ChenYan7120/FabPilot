@@ -1,9 +1,8 @@
-"""Supervisor Agent: hierarchical ReAct router over delegation tools.
+"""Supervisor Agent：基于委托工具的层级 ReAct 路由器。
 
-The Supervisor does not analyse data itself. Its "tools" are delegation handles
-that invoke the three specialist subgraphs synchronously; each returns the
-specialist's summary as an observation. A final ``finish`` tool carries the
-Markdown report. The whole delegation trail is recorded in shared state.
+Supervisor 本身不做数据分析。它的“工具”是委托句柄，会同步调用三个专职子图；
+每个子图把各自专家的总结作为观察结果返回。最后由 ``finish`` 工具产出 Markdown
+报告。整条委托轨迹都会记录在共享状态中。
 """
 from __future__ import annotations
 

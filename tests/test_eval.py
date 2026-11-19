@@ -1,4 +1,4 @@
-"""Evaluation framework tests: metric computation and report rendering."""
+"""评测框架测试：指标计算与报告渲染。"""
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -50,7 +50,7 @@ def test_tool_accuracy_counts_ok():
 
 
 def test_compute_metrics_returns_numeric_bundle():
-    # A completed run with one delegation to the expected agent.
+    # 一次已完成、且向预期 agent 委派过一次的运行。
     state = {
         "status": "completed",
         "final_report": "root cause: mfc drift",

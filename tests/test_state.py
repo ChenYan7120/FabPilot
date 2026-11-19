@@ -1,4 +1,4 @@
-"""Shared LangGraph state tests."""
+"""共享 LangGraph state 测试。"""
 from __future__ import annotations
 
 from fabpilot.state import LIST_FIELDS, diff_state, initial_state

@@ -1,4 +1,4 @@
-"""Knowledge Agent: hybrid retrieval over the knowledge base with citations."""
+"""知识 Agent：基于知识库的混合检索，并附带来源引用。"""
 from __future__ import annotations
 
 from typing import Any

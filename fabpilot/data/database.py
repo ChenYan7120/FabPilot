@@ -1,7 +1,6 @@
-"""Database engine / session management.
+"""数据库 engine / session 管理。
 
-The business database URL is fully configurable. Production uses PostgreSQL
-(see docker-compose.yml); tests and quick local runs may point at SQLite.
+业务数据库 URL 完全可配置。生产环境使用 PostgreSQL（见 docker-compose.yml）；测试和本地快速运行可指向 SQLite。
 """
 from __future__ import annotations
 
@@ -44,7 +43,7 @@ def get_session_factory() -> sessionmaker:
 
 @contextmanager
 def session_scope() -> Iterator[Session]:
-    """Transactional session scope bound to the global engine."""
+    """绑定到全局 engine 的事务性 session scope。"""
     session = get_session_factory()()
     try:
         yield session
@@ -57,11 +56,9 @@ def session_scope() -> Iterator[Session]:
 
 
 def build_session_scope(url: str, create_tables: bool = False):
-    """Return a session scope bound to a dedicated engine for ``url``.
+    """返回一个绑定到 ``url`` 专用 engine 的 session scope。
 
-    Used by the runtime and the evaluation layer so a custom database URL (e.g. a
-    temporary SQLite file) is honoured end-to-end without touching the global
-    engine.
+    供 runtime 与评估层使用，使自定义数据库 URL（例如临时 SQLite 文件）无需触碰全局 engine 即可端到端生效。
     """
     engine = make_engine(url)
     if create_tables:

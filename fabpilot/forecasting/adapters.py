@@ -1,9 +1,6 @@
-"""Adapter skeletons for real deep time-series models (PatchTST, iTransformer).
+"""用于真实深度时序模型（PatchTST、iTransformer）的 adapter 骨架。
 
-These adapters define *how* a trained model plugs into the registry. They are
-interface-only: invoking ``forecast`` before a checkpoint is loaded raises
-``ForecastModelNotAvailable`` rather than returning fake numbers. PyTorch is an
-optional dependency imported lazily so the rest of FabPilot runs without it.
+这些 adapter 定义训练好的模型 *如何* 接入 registry。它们仅提供接口：在 checkpoint 加载之前调用 ``forecast`` 会抛出 ``ForecastModelNotAvailable``，而不是返回虚假数值。PyTorch 是可选依赖，采用惰性导入，因此 FabPilot 的其余部分无需它即可运行。
 """
 from __future__ import annotations
 
@@ -20,7 +17,7 @@ from fabpilot.forecasting.base import (
 
 
 class _TorchForecastAdapter:
-    """Shared scaffolding for checkpoint-backed models."""
+    """基于 checkpoint 的模型所共用的脚手架。"""
 
     model_arch: str = "base"
     name: str = "base"
@@ -39,8 +36,7 @@ class _TorchForecastAdapter:
         self._checkpoint_path = Path(path)
         if not self._checkpoint_path.exists():
             raise ForecastModelNotAvailable(f"Checkpoint not found: {path}")
-        # In a real deployment this reconstructs the architecture, loads state_dict
-        # and moves the model to eval mode. The exact keys are architecture-specific.
+        # 在真实部署中，这里会重建架构、加载 state_dict 并将模型切换到 eval 模式。具体的键因架构而异。
         self._model = self._build_model(**model_kwargs)
         self._model.load_state_dict(torch.load(self._checkpoint_path, map_location="cpu"))
         self._model.eval()
@@ -54,8 +50,7 @@ class _TorchForecastAdapter:
                 f"{self.name} is registered but no checkpoint is loaded; "
                 "call load_checkpoint() first or switch the default forecast model."
             )
-        # Inference would convert request.series into a tensor, run the model and
-        # return ForecastResult. Kept explicit so no placeholder values are emitted.
+        # 推理会将 request.series 转换为 tensor、运行模型并返回 ForecastResult。这里保持显式，以免输出任何占位值。
         raise ForecastModelNotAvailable(f"{self.name} inference not wired to a live model.")
 
 

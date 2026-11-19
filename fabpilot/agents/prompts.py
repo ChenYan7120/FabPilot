@@ -1,8 +1,7 @@
-"""System prompts for the Supervisor and the three specialised agents.
+"""Supervisor 与三个专职 agent 的系统提示词。
 
-Prompts steer *what* each agent does and, critically, the boundaries between
-agents — the forecasting model is pure regression, correlation is never causation,
-and the Diagnosis Agent drives a real Hypothesis-Evidence Memory via tools.
+提示词引导每个 agent 做什么，关键是划分 agent 之间的边界——预测模型是纯回归，
+相关性从来不是因果，诊断 Agent 通过工具驱动真实的 Hypothesis-Evidence Memory。
 """
 from __future__ import annotations
 

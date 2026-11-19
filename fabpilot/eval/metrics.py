@@ -1,15 +1,14 @@
-"""Evaluation metrics.
+"""评测指标。
 
-Nine categories, each computed from *real* run artifacts (tool history, shared
-state, ground-truth labels, held-out forecast residuals) rather than from any
-scripted string:
+共九类，每类都基于*真实*运行产物（tool 历史、共享状态、真值标签、
+留出的预测残差）计算，而非基于任何脚本字符串：
 
-  task_success, tool_accuracy, routing_accuracy, diagnosis_top_k,
-  evidence_consistency, rag_recall_at_k, ts_metrics (MAE/MSE/F1),
-  efficiency, robustness.
+  task_success、tool_accuracy、routing_accuracy、diagnosis_top_k、
+  evidence_consistency、rag_recall_at_k、ts_metrics（MAE/MSE/F1）、
+  efficiency、robustness。
 
-Metrics that do not apply to a scenario / config (no diagnosis agent, no
-retrieval performed, ...) are returned as ``None`` and excluded from aggregates.
+对某场景 / config 不适用的指标（无诊断 agent、未执行检索等）返回 ``None``，
+并从聚合中排除。
 """
 from __future__ import annotations
 
@@ -136,11 +135,10 @@ def rag_recall_at_k(state: dict[str, Any], relevant_sources: list[str]) -> dict[
 
 
 def _heldout_forecast_metrics(harness: Any, scenario: Any) -> dict[str, Any]:
-    """Held-out accuracy of the registered forecast model over the scenario split.
+    """已注册预测模型在场景切分上的留出准确率。
 
-    This is a model-level metric computed by the harness (train on the first
-    ``forecast_cut_fraction`` of the series, predict the next ``horizon`` points,
-    compare to the actual held-out values). It does not depend on the scripted LLM.
+    这是由 harness 计算的模型级指标（在序列前 ``forecast_cut_fraction`` 部分上训练，
+    预测接下来 ``horizon`` 个点，并与真实留出值比较）。它不依赖脚本化 LLM。
     """
     gt = scenario.ground_truth
     if not (gt.equipment_id and gt.channel):
@@ -177,7 +175,7 @@ def _heldout_forecast_metrics(harness: Any, scenario: Any) -> dict[str, Any]:
 
 
 def _anomaly_f1(harness: Any, scenario: Any, state: dict[str, Any]) -> dict[str, Any]:
-    """Anomaly-detection F1 against the simulator's injected ground-truth windows."""
+    """针对模拟器注入的真值窗口计算的异常检测 F1。"""
     gt = scenario.ground_truth
     if not (gt.equipment_id and gt.channel and gt.anomaly_scenario):
         return {"ts_anomaly_precision": None, "ts_anomaly_recall": None, "ts_anomaly_f1": None}
@@ -243,7 +241,7 @@ def compute_metrics(
     harness: Any,
     wall_time_s: float,
 ) -> dict[str, Any]:
-    """Compute the full metric bundle for one (scenario, config) run."""
+    """为一次 (scenario, config) 运行计算完整指标集合。"""
     m: dict[str, Any] = {}
     m["task_success"] = task_success(state)
     m.update(tool_accuracy(state))
@@ -272,7 +270,7 @@ def compute_metrics(
     return m
 
 
-# Metric keys that should be averaged when aggregating across scenarios.
+# 在跨场景聚合时应取平均的指标键。
 NUMERIC_METRICS = [
     "task_success",
     "tool_accuracy",

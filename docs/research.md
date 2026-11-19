@@ -1,62 +1,56 @@
-# Research: Samsung Semiconductor Defect Agent
+# 研究：Samsung Semiconductor Defect Agent
 
-This note records the design inspiration and where FabPilot diverges. It is based
-on **public descriptions** of Samsung's semiconductor defect-classification work;
-FabPilot contains no Samsung source code and reproduces no proprietary model.
+这篇笔记记录了设计灵感以及 FabPilot 与之分歧之处。它基于三星 semiconductor defect-classification 工作的
+**公开描述**；FabPilot 不包含任何三星源代码，也不复刻任何专有模型。
 
-## What we learned from the public accounts
+## 我们从公开资料中学到了什么
 
-Samsung's semiconductor defect agent (reported in connection with high-bandwidth
-memory / chip fabrication) is described as combining:
+三星的 semiconductor defect agent（据称与 high-bandwidth memory / 芯片制造相关）
+被描述为结合了：
 
-1. **Per-image and per-wafer segmentation + defect classification** of defect
-   micrographs, used to prioritise which wafers need review.
-2. **Hypothesis-driven workflow** — an operator states a hypothesis, and the
-   system gathers evidence to confirm or refute it, rather than blindly ranking
-   every defect.
-3. **A feedback loop** from found defects back into the classification / review
-   pipeline, so the system improves as labelled examples accumulate.
+1. 缺陷显微图的**逐图像、逐晶圆 segmentation + defect classification**，
+   用于确定哪些晶圆需要优先复查。
+2. **Hypothesis 驱动的工作流** —— 操作员提出一个 hypothesis，系统收集证据来
+   证实或反驳它，而不是盲目地对每个缺陷进行排序。
+3. **一个反馈回路**，把发现的缺陷回灌到 classification / review pipeline 中，
+   使系统随着已标注样本的积累而不断改进。
 
-The recurring theme is *hypothesis-first triage*: reduce the search space by
-naming a hypothesis, then let evidence decide.
+反复出现的主题是 *hypothesis 优先的分诊*：先提出一个 hypothesis 来缩小搜索空间，
+再让证据来决定。
 
-## What FabPilot adopts (conceptually)
+## FabPilot 借鉴了什么（概念层面）
 
-FabPilot ports the **hypothesis-driven reasoning pattern** — not the vision model —
-to industrial time-series diagnosis:
+FabPilot 把 **hypothesis 驱动的推理模式**（而非视觉模型）移植到
+工业时序诊断中：
 
-- A user task names a symptom (e.g. "gas_flow drift on ETCH-01").
-- The **Diagnosis Agent** generates explicit hypotheses and collects evidence
-  through tools (lag analysis, correlation, maintenance history, similar cases).
-- A deterministic **Hypothesis-Evidence Memory** transitions each hypothesis
-  through `candidate → active → supported / refuted / inconclusive`.
-- Evidence is *linked* to hypotheses and *re-evaluated* — the same
-  confirm/refute loop, applied to telemetry instead of micrographs.
+- 用户任务描述一个症状（例如「ETCH-01 的 gas_flow drift」）。
+- **Diagnosis Agent** 生成显式的 hypotheses，并通过 tools（lag 分析、
+  correlation、维护历史、相似案例）收集证据。
+- 确定性的 **Hypothesis-Evidence Memory** 让每个 hypothesis 依次经历
+  `candidate → active → supported / refuted / inconclusive`。
+- 证据被*关联*到 hypotheses 上并*重新评估* —— 同样的
+  证实/反驳循环，只不过作用于遥测数据而非显微图。
 
-## Where FabPilot deliberately diverges
+## FabPilot 有意分歧之处
 
-| Samsung (public descriptions) | FabPilot |
+| Samsung（公开描述） | FabPilot |
 |---|---|
-| Vision: defect micrograph classification | Time-series: sensor telemetry, alarms, maintenance |
-| Operator-authored hypothesis entry | Supervisor + Diagnosis Agent co-generate hypotheses |
-| Defect-priority triage over wafers | Root-cause ranking over hypotheses |
-| Proprietary vision models | Real statistical baseline + interface-only PatchTST/iTransformer adapters |
-| (Not publicly detailed) | Full open, auditable ReAct trail in shared state |
+| 视觉：缺陷显微图分类 | 时序：传感器遥测、alarms、维护 |
+| 由操作员提出 hypothesis 输入 | Supervisor + Diagnosis Agent 共同生成 hypotheses |
+| 面向晶圆的缺陷优先级分诊 | 面向 hypotheses 的根因排序 |
+| 专有视觉模型 | 真实 statistical baseline + 仅接口的 PatchTST/iTransformer adapters |
+| （公开资料未详述） | 在共享状态中的完全开放、可审计的 ReAct 轨迹 |
 
-## Why "hypothesis-first" matters for diagnosis
+## 为什么「hypothesis 优先」对诊断很重要
 
-A naive agent that dumps every statistic on a symptom can drown in correlated
-channels. Hypothesis-first triage forces a candidate causal story to be named
-*first*, then verified with targeted evidence. That is why FabPilot treats a
-correlation as **evidence for** a hypothesis, never as causation by itself — the
-same discipline that keeps Samsung's reported system from over-trusting a
-classifier's confidence.
+一个把每个统计量都倾泻到症状上的朴素 agent，会被相关 channel 淹没。
+hypothesis 优先的分诊要求*首先*提出一个候选的因果叙事，然后用有针对性的证据来验证。
+这就是为什么 FabPilot 把 correlation 当作 hypothesis 的**证据**，而绝不会单独当作 causation ——
+正是这种自律让三星所报道的系统避免过度信任分类器的置信度。
 
-## References
+## 参考资料
 
-- Public reporting on Samsung's semiconductor AI agent (HBM defect
-  classification and priority review) — see tech-press coverage of the
-  Samsung/ASML/Applied Materials fab-automation announcements.
-- [ragent](https://github.com/infiniflow/ragent) — source of the hybrid
-  dense+sparse RRF retrieval design pattern (reimplemented in Python in
-  `fabpilot/rag/`).
+- 关于三星 semiconductor AI agent（HBM 缺陷分类与优先级复查）的公开报道 —— 参见对
+  Samsung/ASML/Applied Materials fab 自动化公告的科技媒体报道。
+- [ragent](https://github.com/infiniflow/ragent) —— 混合
+  dense+sparse RRF 检索设计模式的来源（已在 `fabpilot/rag/` 中用 Python 重新实现）。

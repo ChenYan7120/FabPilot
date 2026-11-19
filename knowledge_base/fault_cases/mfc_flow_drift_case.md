@@ -1,23 +1,21 @@
-# Fault Case: MFC Gas Flow Drift (ETCH-01)
+# 故障案例：MFC Gas Flow Drift（ETCH-01）
 
-## Summary
-`gas_flow` on ETCH-01 drifted monotonically below its setpoint over a 24-hour
-period while `pressure` followed with a lag. Etch rate degraded ~4%.
+## 摘要
+ETCH-01 上的 `gas_flow` 在 24 小时内单调漂移到其设定值以下，
+同时 `pressure` 以一定 lag 跟随。刻蚀速率下降约 4%。
 
-## Evidence chain
-1. `gas_flow` trend: negative linear slope, no oscillation.
-2. `pressure` lag-correlates with `gas_flow` (lag ≈ 20 min).
-3. `rf_power` and `bias_voltage` stable → plasma not the cause.
-4. Maintenance record shows the MFC last calibrated 9 months prior.
+## 证据链
+1. `gas_flow` 趋势：负线性斜率，无振荡。
+2. `pressure` 与 `gas_flow` 存在 lag 相关（lag ≈ 20 min）。
+3. `rf_power` 和 `bias_voltage` 稳定 → 等离子体并非原因。
+4. 维护记录显示 MFC 上次校准是在 9 个月前。
 
-## Root cause
-MFC ageing / thermal drift of the control element.
+## 根因
+MFC 老化 / 控制元件的热漂移。
 
-## Resolution
-Zero/span calibration restored setpoint tracking; MFC flagged for replacement
-at the next scheduled PM.
+## 处置
+零/满量程校准恢复了设定值跟踪；MFC 被标记为在下次计划 PM 时更换。
 
-## Lesson
-A *leading* flow deviation with a *lagging* pressure deviation isolates the MFC
-from the throttle valve / pump loop. Without the lead/lag ordering, the two
-channels are merely correlated.
+## 经验教训
+*领先*的流量偏差加上*滞后*的压力偏差，能把 MFC 与节流阀 / 泵回路区分开来。
+如果没有这种领先/滞后的先后顺序，这两个 channel 就仅仅只是相关而已。

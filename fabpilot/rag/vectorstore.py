@@ -1,4 +1,4 @@
-"""Vector store backends: in-memory (default) and pgvector."""
+"""Vector store 后端：内存（默认）与 pgvector。"""
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -25,7 +25,7 @@ class VectorStore(Protocol):
 
 
 class InMemoryVectorStore:
-    """Numpy-backed cosine similarity store. Default for offline / dev."""
+    """基于 Numpy 的余弦相似度存储。离线 / 开发的默认选项。"""
 
     def __init__(self) -> None:
         self._ids: list[str] = []
@@ -62,8 +62,7 @@ class InMemoryVectorStore:
 
 
 class PgVectorStore:
-    """pgvector-backed store (requires the ``pgvector`` package and a Postgres
-    instance with the extension enabled)."""
+    """基于 pgvector 的存储（需要 ``pgvector`` 包以及已启用扩展的 Postgres 实例）。"""
 
     def __init__(self, connection: str, dim: int, table: str = "vector_documents") -> None:
         try:

@@ -1,4 +1,4 @@
-"""Agent layer: Supervisor + Time-Series + Diagnosis + Knowledge + shared ReAct loop."""
+"""Agent 层：Supervisor + 时序 + 诊断 + 知识 + 共享的 ReAct 循环。"""
 from __future__ import annotations
 
 from fabpilot.agents.base import ReactResult, run_react_loop

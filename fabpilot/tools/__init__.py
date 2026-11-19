@@ -1,4 +1,4 @@
-"""Tool layer: registry + the full catalog of data / time-series / knowledge / general tools."""
+"""工具层：registry 以及 data / time-series / knowledge / general 工具的完整目录。"""
 from __future__ import annotations
 
 from fabpilot.tools import data_tools, general_tools, knowledge_tools, memory_tools, timeseries_tools
@@ -16,29 +16,29 @@ __all__ = [
 
 MEMORY_TOOL_NAMES = memory_tools.MEMORY_TOOL_NAMES
 
-# Every tool is a ``Tool`` instance created by the ``@tool`` decorator.
+# 每个工具都是由 ``@tool`` 装饰器创建的 ``Tool`` 实例。
 _ALL_TOOLS: list[Tool] = [
-    # data
+    # 数据
     data_tools.sql_query,
     data_tools.equipment_status,
     data_tools.sensor_data,
     data_tools.alarm_log,
     data_tools.maintenance_record,
     data_tools.fault_case,
-    # time-series
+    # 时间序列
     timeseries_tools.forecast,
     timeseries_tools.anomaly_detection,
     timeseries_tools.correlation,
     timeseries_tools.lag_analysis,
     timeseries_tools.statistical_analysis,
-    # knowledge
+    # 知识
     knowledge_tools.document_retrieval,
     knowledge_tools.similar_case_retrieval,
-    # general
+    # 通用
     general_tools.python_analysis,
     general_tools.chart,
     general_tools.report,
-    # hypothesis-evidence memory (internal to the Diagnosis Agent)
+    # 假设-证据 memory（Diagnosis Agent 内部使用）
     memory_tools.add_hypothesis,
     memory_tools.add_evidence,
     memory_tools.add_pending_check,
@@ -47,8 +47,8 @@ _ALL_TOOLS: list[Tool] = [
     memory_tools.list_hypotheses,
 ]
 
-# Tool subsets exposed to each specialised agent. The Supervisor uses dedicated
-# delegation tools rather than these domain tools.
+# 暴露给各专职 agent 的工具子集。Supervisor 使用专门的
+# 委派工具，而不是这些领域工具。
 AGENT_TOOL_NAMES: dict[str, list[str]] = {
     "timeseries": [
         "sensor_data",

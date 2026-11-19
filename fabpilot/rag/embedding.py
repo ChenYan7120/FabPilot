@@ -1,9 +1,8 @@
-"""Embedding providers.
+"""Embedding 提供者。
 
-Two backends behind one interface:
-  * ``OpenAICompatibleEmbedder`` — calls any OpenAI-compatible ``/embeddings`` endpoint.
-  * ``HashEmbedder`` — deterministic bag-of-token hashing (no network), used for
-    offline tests and development so RAG works end-to-end without a model service.
+同一接口背后的两种后端：
+  * ``OpenAICompatibleEmbedder`` —— 调用任意 OpenAI 兼容的 ``/embeddings`` 端点。
+  * ``HashEmbedder`` —— 确定性的词袋哈希（无需网络），用于离线测试和开发，使 RAG 无需模型服务即可端到端运行。
 """
 from __future__ import annotations
 
@@ -24,12 +23,12 @@ _TOKEN_RE = re.compile(r"[a-z0-9]+")
 class Embedder(Protocol):
     dim: int
 
-    def embed(self, texts: list[str]) -> np.ndarray:  # shape (n, dim)
+    def embed(self, texts: list[str]) -> np.ndarray:  # 形状 (n, dim)
         ...
 
 
 class HashEmbedder:
-    """Deterministic pseudo-embedding: shared tokens yield similar vectors."""
+    """确定性的伪 embedding：共享 token 会产生相似的向量。"""
 
     def __init__(self, dim: int = 1024) -> None:
         self.dim = dim

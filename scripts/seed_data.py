@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate and seed synthetic industrial data."""
+"""生成并写入合成工业数据。"""
 from fabpilot.main import main
 
 if __name__ == "__main__":

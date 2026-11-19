@@ -1,4 +1,4 @@
-"""RAG pipeline tests: chunking, hybrid retrieval and doc_type scoping."""
+"""RAG pipeline 测试：chunking、混合检索与 doc_type 作用域。"""
 from __future__ import annotations
 
 from fabpilot.rag.pipeline import split_text, load_documents
@@ -12,7 +12,7 @@ def test_split_text_preserves_paragraphs():
     text = "\n\n".join(f"paragraph {i} " * 20 for i in range(10))
     chunks = split_text(text, chunk_size=200, overlap=20)
     assert len(chunks) > 1
-    assert "".join(chunks).replace("\n\n", "") != ""  # nothing lost entirely
+    assert "".join(chunks).replace("\n\n", "") != ""  # 内容未整体丢失
     assert all(c for c in chunks)
 
 

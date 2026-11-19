@@ -1,32 +1,29 @@
-# Sensor Bias Detection — Troubleshooting SOP
+# Sensor Bias 检测 —— 排障 SOP
 
-## Applicability
-Any process chamber where a single sensor channel reads consistently offset.
+## 适用范围
+任何单个传感器 channel 读数持续偏移的工艺腔室。
 
-## Background
-A biased sensor reports a constant offset from the true physical value. This
-differs from noise (random) and drift (monotonic). Bias is typically caused by
-zero-point offset, wiring/ground-loop issues, or a damaged sensing element.
+## 背景
+有偏差的传感器会报告一个相对真实物理值的恒定偏移。这与噪声（随机的）和漂移（单调的）不同。
+偏差通常由零点偏移、接线/接地环路问题或传感元件损坏引起。
 
-## Observable signatures
-- One channel is offset from its expected baseline by a constant amount.
-- The offset persists across unrelated process conditions.
-- Other channels are unaffected, and no physical fault is present.
+## 可观察特征
+- 某个 channel 相对其预期 baseline 偏移了一个恒定量。
+- 该偏移在无关的工艺条件下持续存在。
+- 其他 channel 不受影响，且不存在物理故障。
 
-## Diagnostic procedure
-1. Establish the historical baseline mean for the channel.
-2. Compute the residual (observed − baseline) and confirm it is *constant*.
-3. Cross-check a redundant/derived channel (e.g. compare `pressure` against the
-   physically-coupled `vacuum_pressure` or `gas_flow`).
-4. If two independent sensors disagree by a constant offset, at least one is
-   biased.
+## 诊断步骤
+1. 确定该 channel 的历史 baseline 均值。
+2. 计算残差（观测值 − baseline），并确认它是*恒定*的。
+3. 交叉检查一个冗余/派生 channel（例如把 `pressure` 与物理上耦合的
+   `vacuum_pressure` 或 `gas_flow` 进行比较）。
+4. 如果两个独立传感器相差一个恒定的偏移，那么至少有一个存在偏差。
 
-## Recommended actions
-- Re-zero the sensor.
-- Inspect cabling and ground integrity.
-- Replace the sensor if zeroing cannot remove the offset.
+## 建议措施
+- 重新调零传感器。
+- 检查线缆和接地完整性。
+- 如果调零无法消除偏移，则更换传感器。
 
-## Correlation vs causation note
-A constant offset in a *single* channel while redundant channels agree is the
-strongest evidence of sensor bias. A real process shift would move multiple
-coupled channels together.
+## 关于 correlation 与 causation 的说明
+当冗余 channel 一致时，*单个* channel 的恒定偏移是传感器偏差的最有力证据。
+真正的工艺漂移会让多个耦合的 channel 一起变化。

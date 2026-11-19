@@ -1,4 +1,4 @@
-"""Pydantic request/response models for the FabPilot API."""
+"""FabPilot API 的 Pydantic 请求/响应模型。"""
 from __future__ import annotations
 
 from typing import Any

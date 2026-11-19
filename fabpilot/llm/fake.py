@@ -1,9 +1,8 @@
-"""Deterministic FakeLLM for offline / integration testing.
+"""用于离线 / 集成测试的确定性 FakeLLM。
 
-This provider replays a caller-supplied script of (content, tool_calls) turns.
-It is *only* a test double: it makes no attempt to reason, and it is never used
-to masquerade pre-scripted routing as autonomous LLM behaviour. When the script
-is exhausted it returns an empty stop response so graphs always terminate.
+该 provider 会按调用方提供的脚本重放一组 (content, tool_calls) 轮次。它 *只是* 一个
+测试替身：它不会尝试推理，也绝不会把预先编排好的路由伪装成自主的 LLM 行为。
+当脚本耗尽时，它会返回空的 stop 响应，从而保证图总能终止。
 """
 from __future__ import annotations
 
@@ -16,7 +15,7 @@ from fabpilot.utils import new_id
 class FakeLLM:
     def __init__(self, script: list[AssistantResponse] | None = None) -> None:
         self._script: deque[AssistantResponse] = deque(script or [])
-        self.calls: list[dict] = []  # audit of everything it was asked to complete
+        self.calls: list[dict] = []  # 记录它被要求 complete 的每次调用
 
     def complete(self, messages: list[ChatMessage], tools: list[dict] | None = None) -> AssistantResponse:
         self.calls.append(
@@ -30,7 +29,7 @@ class FakeLLM:
             return self._script.popleft()
         return AssistantResponse(content="", tool_calls=[], finish_reason="stop")
 
-    # ---- convenience constructors used by tests ----
+    # ---- 供测试使用的便捷构造方法 ----
     @staticmethod
     def tool(name: str, arguments: dict | None = None, content: str = "") -> AssistantResponse:
         return AssistantResponse(

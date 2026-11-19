@@ -1,4 +1,4 @@
-"""Reusable read-side queries shared by the data tools and the MES/FDC API."""
+"""供数据工具与 MES/FDC API 共用的可复用读侧查询。"""
 from __future__ import annotations
 
 from datetime import datetime

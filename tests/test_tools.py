@@ -1,4 +1,4 @@
-"""Tool registry tests: catalog completeness and agent tool subsets."""
+"""tool 注册表测试：目录完整性与 agent 的 tool 子集。"""
 from __future__ import annotations
 
 from fabpilot.tools import AGENT_TOOL_NAMES, MEMORY_TOOL_NAMES, build_tool_registry

@@ -1,8 +1,7 @@
-"""LLM message / response schemas.
+"""LLM 消息 / 响应 schema。
 
-We intentionally use our own small message types instead of coupling the agent
-loop to a specific vendor's SDK. The OpenAI-compatible provider maps these to
-the wire format; the FakeLLM provider produces them directly.
+我们有意使用自己定义的小型消息类型，而不是把 agent 循环耦合到特定厂商的 SDK。
+OpenAI 兼容 provider 会把这些映射为线上传输格式；FakeLLM provider 则直接生成它们。
 """
 from __future__ import annotations
 
@@ -47,10 +46,9 @@ class ToolCall(BaseModel):
 
 
 class AssistantResponse(BaseModel):
-    """The visible, auditable part of an LLM turn.
+    """LLM 一轮回复中可见、可审计的部分。
 
-    ``content`` is the decision summary the model exposes; hidden chain-of-thought
-    is never recorded or surfaced.
+    ``content`` 是模型对外暴露的决策摘要；隐藏的 chain-of-thought 永远不会被记录或呈现。
     """
 
     content: str
