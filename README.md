@@ -34,25 +34,35 @@ retrieval-augmented reasoning 统一整合在一个 Supervisor 之后。其灵�
 
 ```mermaid
 flowchart TB
-    USER["用户任务"] --> SUP["Supervisor（层级 ReAct）"]
+    USER["👤 用户给个任务<br/>例如：ETCH-01 的 gas_flow 漂移了，查根因"] --> SUP
 
-    SUP -->|delegate_to_timeseries| TS["时序 Agent"]
-    SUP -->|delegate_to_diagnosis| DX["诊断 Agent"]
-    SUP -->|delegate_to_knowledge| KN["知识 Agent"]
-    SUP -->|finish| OUT["最终报告"]
+    SUP{"Supervisor（总调度）<br/>看懂任务 → 判断该找谁<br/>→ 收到结果再决定"}
 
-    TS --> TST["sensor_data · forecast · anomaly_detection · correlation · lag · stats"]
-    DX --> DXT["sensor_data · alarms · maintenance · fault_case · correlation · lag"]
-    DX <--> MEM["Hypothesis-Evidence Memory"]
-    KN --> KNT["document_retrieval · similar_case_retrieval"]
+    subgraph AGENTS["三个专业 Agent，各管一摊"]
+        TS["时序 Agent<br/>查数据 · 做预测 · 找异常"]
+        DX["诊断 Agent<br/>提假设 · 找证据 · 定根因"]
+        KN["知识 Agent<br/>查文档 · 找相似案例"]
+    end
 
-    TST --> REG["Forecast 模型注册表"]
-    TST --> DB[("MES/FDC 数据库")]
-    DXT --> DB
-    KNT --> KB[("知识库（RAG）")]
-    DXT --> KB
+    SUP -->|"需要数字"| TS
+    SUP -->|"需要原因"| DX
+    SUP -->|"需要资料"| KN
 
-    SUP --> STATE["共享 LangGraph state（checkpointed）"]
+    TS --> TSD["读传感器读数 · 预测未来趋势 · 标出异常点"]
+    DX --> DXD["翻报警/维修记录 · 对比相关信号 · 用证据支撑或推翻假设"]
+    KN --> KND["检索 SOP / 报警 / 故障案例 · 每条都附出处"]
+
+    TSD --> DB[("业务数据库<br/>设备 · 传感器 · 报警 · 维修")]
+    TSD --> REG["预测模型注册表"]
+    DXD --> DB
+    DXD --> MEM["假设-证据记忆<br/>只记相关性，不轻易下因果结论"]
+    KND --> KB[("知识库<br/>SOP · 报警 · 故障案例")]
+
+    TS -. "回传结果，可继续派" .-> SUP
+    DX -. "回传结果，可继续派" .-> SUP
+    KN -. "回传结果，可继续派" .-> SUP
+
+    SUP -->|"信息够了"| OUT["📄 汇总成最终报告"]
 ```
 
 完整的拓扑结构、agent 边界、ReAct 循环和持久化模型请参阅
