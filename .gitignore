@@ -1,0 +1,50 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+env/
+
+# Env & secrets — never commit API keys
+.env
+.env.local
+*.pem
+*.key
+
+# Data / artifacts
+*.db
+*.sqlite3
+data/*.parquet
+data/*.csv
+data/charts/
+data/reports/
+data/sessions.json
+charts/
+artifacts/
+runs/
+eval_results/
+
+# Model weights (large, not tracked)
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+*.onnx
+models/
+
+# IDE / OS
+.idea/
+.vscode/
+.DS_Store
+*.swp
+
+# Test / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/

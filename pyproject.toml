@@ -1,0 +1,46 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fabpilot"
+version = "0.1.0"
+description = "Hypothesis-Driven Multi-Agent System for Industrial Time-Series Analysis and Fault Diagnosis"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "Apache-2.0" }
+authors = [{ name = "FabPilot Contributors" }]
+dependencies = [
+    "langgraph>=0.2.0",
+    "langchain-core>=0.3.0",
+    "pydantic>=2.7.0",
+    "pydantic-settings>=2.3.0",
+    "httpx>=0.27.0",
+    "numpy>=1.26.0",
+    "pandas>=2.0.0",
+    "sqlalchemy>=2.0.0",
+    "psycopg[binary]>=3.1.0",
+    "fastapi>=0.111.0",
+    "uvicorn[standard]>=0.30.0",
+]
+
+[project.optional-dependencies]
+ui = ["streamlit>=1.35.0", "plotly>=5.22.0"]
+charts = ["matplotlib>=3.8.0"]
+rag-pgvector = ["pgvector>=0.3.0"]
+forecast-torch = ["torch>=2.1.0"]   # only required by real PatchTST/iTransformer adapters
+dev = ["pytest>=8.0.0", "pytest-asyncio>=0.23.0"]
+
+[project.scripts]
+fabpilot = "fabpilot.main:main"
+
+[tool.setuptools.packages.find]
+include = ["fabpilot*"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+
+[tool.ruff]
+line-length = 100

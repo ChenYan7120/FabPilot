@@ -1,0 +1,22 @@
+services:
+  postgres:
+    # pgvector-enabled PostgreSQL used by both the business database and the
+    # optional pgvector-backed RAG store.
+    image: pgvector/pgvector:pg16
+    container_name: fabpilot-postgres
+    environment:
+      POSTGRES_USER: fabpilot
+      POSTGRES_PASSWORD: fabpilot
+      POSTGRES_DB: fabpilot
+    ports:
+      - "5432:5432"
+    volumes:
+      - fabpilot_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U fabpilot -d fabpilot"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  fabpilot_pgdata:
